@@ -2,7 +2,20 @@
 function $(elem)
 {
     return document.getElementById(elem);
-}
+};
+
+// quit the application
+function quit(forced)
+{
+    var appStartup = Components.classes['@mozilla.org/toolkit/app-startup;1'].
+      getService(Components.interfaces.nsIAppStartup);
+    
+    var quitSeverity = forced ? Components.interfaces.nsIAppStartup.eForceQuit :
+                                Components.interfaces.nsIAppStartup.eAttemptQuit;
+
+    appStartup.quit(quitSeverity);
+};
+
 
 var KrdWrdApp = {
 
@@ -39,6 +52,8 @@ var KrdWrdApp = {
 
   dump: function()
   {
+    try
+    {
       // save source code
       var source = KrdWrdApp.grabSource();
       if (source)
@@ -47,20 +62,11 @@ var KrdWrdApp = {
       // save page as png
       var grab = KrdWrdApp.grabScreen();
       KrdWrdApp.saveCanvas(grab, KrdWrdApp.outbase + '.png');
-
-      KrdWrdApp.quit();
-  },
-
-  quit : function(aForceQuit)
+    }
+    finally
     {
-      var appStartup = Components.classes['@mozilla.org/toolkit/app-startup;1'].
-        getService(Components.interfaces.nsIAppStartup);
-
-      // eAttemptQuit will try to close each XUL window, but the XUL window can cancel the quit
-      // process if there is unsaved data. eForceQuit will quit no matter what.
-      var quitSeverity = aForceQuit ? Components.interfaces.nsIAppStartup.eForceQuit :
-                                      Components.interfaces.nsIAppStartup.eAttemptQuit;
-      appStartup.quit(quitSeverity);
+      quit();
+    };
   },
 
   grabSource: function()
@@ -138,5 +144,9 @@ var KrdWrdApp = {
 
 };
 
+// auto-kill after 60sec
+setTimeout(function() { quit(true); }, 60000);
+
+// run init after window is up
 window.addEventListener("load", function() { KrdWrdApp.init(); }, false);
 
