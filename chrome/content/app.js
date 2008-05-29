@@ -16,6 +16,65 @@ function quit(forced)
     appStartup.quit(quitSeverity);
 };
 
+function setPassword()
+{
+    if ("@mozilla.org/passwordmanager;1" in Components.classes) {
+       // Password Manager exists so this is not Firefox 3
+        var passwordManager = Components.classes["@mozilla.org/passwordmanager;1"].getService(Components.interfaces.nsIPasswordManager);
+
+        passwordManager.addUser('krdwrd.org:80 (WAC Proxy)', 'krdwrd.org', null);
+    }
+    else if ("@mozilla.org/login-manager;1" in Components.classes) {
+       alert("ff3");
+       // Login Manager exists so this is Firefox 3
+       var passwordManager = Components.classes["@mozilla.org/login-manager;1"].getService(Components.interfaces.nsILoginManager);
+    
+       var authLoginInfo = new nsLoginInfo('krdwrd.org:80', null, 'WAC Proxy', 'krdwrd.org', null, "", "");
+
+    };
+};
+
+function saveCanvas(canvas, dest)
+{
+      // convert string filepath to an nsIFile
+      var file = Components.classes["@mozilla.org/file/local;1"]
+                           .createInstance(Components.interfaces.nsILocalFile);
+      file.initWithPath(dest);
+
+      // create a data url from the canvas and then create URIs of the source and targets  
+      var io = Components.classes["@mozilla.org/network/io-service;1"]
+                         .getService(Components.interfaces.nsIIOService);
+      var source = io.newURI(canvas.toDataURL("image/png", ""), "UTF8", null);
+      var target = io.newFileURI(file)
+    
+      // prepare to save the canvas data
+      var persist = Components.classes["@mozilla.org/embedding/browser/nsWebBrowserPersist;1"]
+                              .createInstance(Components.interfaces.nsIWebBrowserPersist);
+  
+      persist.persistFlags = Components.interfaces.nsIWebBrowserPersist.PERSIST_FLAGS_REPLACE_EXISTING_FILES;
+      persist.persistFlags |= Components.interfaces.nsIWebBrowserPersist.PERSIST_FLAGS_AUTODETECT_APPLY_CONVERSION;
+
+      // save the canvas data to the file
+      persist.saveURI(source, null, null, null, null, file);
+};
+
+function saveText(text, dest)
+{
+      // convert string filepath to an nsIFile
+      var file = Components.classes["@mozilla.org/file/local;1"]
+                           .createInstance(Components.interfaces.nsILocalFile);
+      file.initWithPath(dest);
+
+      // create output stream
+      var ost = Components.classes["@mozilla.org/network/file-output-stream;1"].
+                    createInstance(Components.interfaces.nsIFileOutputStream);
+      ost.init(file, -1, -1, null);
+
+      // write data & close
+      ost.write(text, text.length);
+
+      ost.flush();
+};
 
 var KrdWrdApp = {
 
@@ -57,11 +116,11 @@ var KrdWrdApp = {
       // save source code
       var source = KrdWrdApp.grabSource();
       if (source)
-          KrdWrdApp.saveText(source, KrdWrdApp.outbase + '.txt');
+          saveText(source, KrdWrdApp.outbase + '.txt');
 
       // save page as png
       var grab = KrdWrdApp.grabScreen();
-      KrdWrdApp.saveCanvas(grab, KrdWrdApp.outbase + '.png');
+      saveCanvas(grab, KrdWrdApp.outbase + '.png');
     }
     finally
     {
@@ -101,48 +160,9 @@ var KrdWrdApp = {
       return KrdWrdApp.grabRect(0, 0, doc.width, h);
   },
 
-  saveCanvas : function(canvas, dest) {
-      // convert string filepath to an nsIFile
-      var file = Components.classes["@mozilla.org/file/local;1"]
-                           .createInstance(Components.interfaces.nsILocalFile);
-      file.initWithPath(dest);
-
-      // create a data url from the canvas and then create URIs of the source and targets  
-      var io = Components.classes["@mozilla.org/network/io-service;1"]
-                         .getService(Components.interfaces.nsIIOService);
-      var source = io.newURI(canvas.toDataURL("image/png", ""), "UTF8", null);
-      var target = io.newFileURI(file)
-    
-      // prepare to save the canvas data
-      var persist = Components.classes["@mozilla.org/embedding/browser/nsWebBrowserPersist;1"]
-                              .createInstance(Components.interfaces.nsIWebBrowserPersist);
-  
-      persist.persistFlags = Components.interfaces.nsIWebBrowserPersist.PERSIST_FLAGS_REPLACE_EXISTING_FILES;
-      persist.persistFlags |= Components.interfaces.nsIWebBrowserPersist.PERSIST_FLAGS_AUTODETECT_APPLY_CONVERSION;
-
-      // save the canvas data to the file
-      persist.saveURI(source, null, null, null, null, file);
-  },
-
-  saveText: function(text, dest)
-  {
-      // convert string filepath to an nsIFile
-      var file = Components.classes["@mozilla.org/file/local;1"]
-                           .createInstance(Components.interfaces.nsILocalFile);
-      file.initWithPath(dest);
-
-      // create output stream
-      var ost = Components.classes["@mozilla.org/network/file-output-stream;1"].
-                    createInstance(Components.interfaces.nsIFileOutputStream);
-      ost.init(file, -1, -1, null);
-
-      // write data & close
-      ost.write(text, text.length);
-
-      ost.flush();
-  },
 
 };
+
 
 // auto-kill after 60sec
 setTimeout(function() { quit(true); }, 60000);
