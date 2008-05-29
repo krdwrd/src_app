@@ -82,6 +82,8 @@ var KrdWrdApp = {
 
   url: 'http://krdwrd.org/',
 
+  once: false,
+
   init: function()
   {
       KrdWrdApp.parseCmdLine();
@@ -105,22 +107,32 @@ var KrdWrdApp = {
 
   onPageLoad: function(aEvent)
   {
+      if (KrdWrdApp.once) return;
+      KrdWrdApp.once = true;
       // wait a second for the engine to settle
-      setTimeout(KrdWrdApp.dump, 1000); 
+      dump("Loaded " + KrdWrdApp.url + "\n");
+      setTimeout(KrdWrdApp.dumpPage, 2000); 
   },
 
-  dump: function()
+  dumpPage: function()
   {
     try
     {
       // save source code
       var source = KrdWrdApp.grabSource();
+      dump("Text available: " + (source != null) + "\n");
       if (source)
           saveText(source, KrdWrdApp.outbase + '.txt');
 
       // save page as png
       var grab = KrdWrdApp.grabScreen();
-      saveCanvas(grab, KrdWrdApp.outbase + '.png');
+      dump("Screenshot available: " + (grab != null) + "\n");
+      if (grab)
+          saveCanvas(grab, KrdWrdApp.outbase + '.png');
+    }
+    catch (e)
+    {
+      dump("An Error occured: " + e + "\n");
     }
     finally
     {

@@ -7,3 +7,4 @@ pref("network.proxy.no_proxies_on", "krdwrd.org");
 
 pref("toolkit.defaultChromeURI", "chrome://krdwrdapp/content/main.xul");
 
+pref("browser.dom.window.dump.enabled", true);
