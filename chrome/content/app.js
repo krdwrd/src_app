@@ -16,6 +16,18 @@ function quit(forced)
     appStartup.quit(quitSeverity);
 };
 
+function print(msg)
+{
+    dump(msg + '\n');
+};
+
+// print error to stdout and quit
+function error(msg)
+{
+    print("Error: " + e);
+    quit(true);
+};
+
 function setPassword()
 {
     if ("@mozilla.org/passwordmanager;1" in Components.classes) {
@@ -110,7 +122,7 @@ var KrdWrdApp = {
       if (KrdWrdApp.once) return;
       KrdWrdApp.once = true;
       // wait a second for the engine to settle
-      dump("Loaded " + KrdWrdApp.url + "\n");
+      print("URL: " + KrdWrdApp.url);
       setTimeout(KrdWrdApp.dumpPage, 2000); 
   },
 
@@ -120,24 +132,21 @@ var KrdWrdApp = {
     {
       // save source code
       var source = KrdWrdApp.grabSource();
-      dump("Text available: " + (source != null) + "\n");
+      print("TXT: " + (source != null));
       if (source)
           saveText(source, KrdWrdApp.outbase + '.txt');
 
       // save page as png
       var grab = KrdWrdApp.grabScreen();
-      dump("Screenshot available: " + (grab != null) + "\n");
+      print("PNG: " + (grab != null));
       if (grab)
           saveCanvas(grab, KrdWrdApp.outbase + '.png');
     }
     catch (e)
     {
-      dump("An Error occured: " + e + "\n");
-    }
-    finally
-    {
-      quit();
+      error(e);
     };
+    quit();
   },
 
   grabSource: function()
@@ -177,7 +186,9 @@ var KrdWrdApp = {
 
 
 // auto-kill after 60sec
-setTimeout(function() { quit(true); }, 60000);
+setTimeout(function() { 
+            error("timeout");
+        }, 60000);
 
 // run init after window is up
 window.addEventListener("load", function() { KrdWrdApp.init(); }, false);
