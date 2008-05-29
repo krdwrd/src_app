@@ -9,5 +9,5 @@ then
 	exit 1
 fi
 
-xvfb-run -s '-screen 0 1024x768x24' xulrunner application.ini -url $URL -out $OUT
+xvfb-run -s '-screen 0 1024x768x24' xulrunner application.ini -grab -url $URL -out $OUT
 
