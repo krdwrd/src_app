@@ -24,7 +24,7 @@ function print(msg)
 // print error to stdout and quit
 function error(msg)
 {
-    print("Error: " + e);
+    print("RES: ERR " + msg);
     quit(true);
 };
 
@@ -146,6 +146,7 @@ var KrdWrdApp = {
     {
       error(e);
     };
+    print("RES: SUCCESS");
     quit();
   },
 
@@ -188,7 +189,7 @@ var KrdWrdApp = {
 // auto-kill after 60sec
 setTimeout(function() { 
             error("timeout");
-        }, 60000);
+        }, 30000);
 
 // run init after window is up
 window.addEventListener("load", function() { KrdWrdApp.init(); }, false);

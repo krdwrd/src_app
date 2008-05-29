@@ -28,7 +28,6 @@ do
         # download
         ./krdwrd.sh "$url" `pwd`/$cat.$ind
         if [[ ! -f $FN ]]; then
-            rm $FN
             echo "FAILED" >> $LOG
             echo "FAILED"
             continue;
