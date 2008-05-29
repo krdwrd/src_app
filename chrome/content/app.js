@@ -37,7 +37,6 @@ function setPassword()
         passwordManager.addUser('krdwrd.org:80 (WAC Proxy)', 'krdwrd.org', null);
     }
     else if ("@mozilla.org/login-manager;1" in Components.classes) {
-       alert("ff3");
        // Login Manager exists so this is Firefox 3
        var passwordManager = Components.classes["@mozilla.org/login-manager;1"].getService(Components.interfaces.nsILoginManager);
     
@@ -88,6 +87,45 @@ function saveText(text, dest)
       ost.flush();
 };
 
+
+// progress listener implementing nsIWebProgressListener
+
+const STATE_STOP =
+  Components.interfaces.nsIWebProgressListener.STATE_STOP;
+const STATE_IS_WINDOW = 
+  Components.interfaces.nsIWebProgressListener.STATE_IS_WINDOW;
+
+var pl = 
+{
+  QueryInterface : function(aIID)
+  {
+    if (aIID.equals(Components.interfaces.nsIWebProgressListener) ||
+        aIID.equals(Components.interfaces.nsISupportsWeakReference) ||
+        aIID.equals(Components.interfaces.nsISupports))
+      return this;
+    throw Components.results.NS_NOINTERFACE;
+  }, 
+  onStateChange:function(prog, req, flg, stat)
+  {
+      if ((flg & STATE_STOP) && (flg & STATE_IS_WINDOW)) 
+          KrdWrdApp.onPageLoad();
+  },
+  onLocationChange:function(a,b,c)
+  {
+  },
+  onProgressChange:function(a,b,c,d,e,f)
+  {
+  },
+  onStatusChange:function(a,b,c,d)
+  {
+  },
+  onSecurityChange:function(a,b,c)
+  {
+  },
+};
+
+// main application object
+
 var KrdWrdApp = {
 
   outbase: './output',
@@ -102,7 +140,7 @@ var KrdWrdApp = {
 
       // hook into the browser control
       var browser = $('browse');
-      browser.addEventListener("DOMContentLoaded", this.onPageLoad, true);
+      browser.addProgressListener(pl);
 
       // set target url
       browser.setAttribute('src', KrdWrdApp.url);
@@ -117,13 +155,20 @@ var KrdWrdApp = {
       KrdWrdApp.url = cmdLine.handleFlagWithParam("url", false) || KrdWrdApp.url;
   },
 
-  onPageLoad: function(aEvent)
+  onPageLoad: function()
   {
-      if (KrdWrdApp.once) return;
+      // execute only once
+      if (KrdWrdApp.once)
+      {
+          print("WARN: dumper called again.");
+          return;
+      }
       KrdWrdApp.once = true;
-      // wait a second for the engine to settle
+
       print("URL: " + KrdWrdApp.url);
-      setTimeout(KrdWrdApp.dumpPage, 2000); 
+
+      // wait a second for the engine to settle
+      setTimeout(KrdWrdApp.dumpPage, 1000); 
   },
 
   dumpPage: function()
