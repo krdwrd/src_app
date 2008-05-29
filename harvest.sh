@@ -20,7 +20,7 @@ do
         FN=$cat.$ind.txt
         LOG=$cat.$ind.txt
         # skip if file exists
-		if [[ -f $FV ]]; then
+		if [[ -f $FN ]]; then
             echo "EXISTS" >> $LOG
 			echo "EXISTS"
 			continue
