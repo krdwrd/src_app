@@ -10,6 +10,7 @@ xmlns:html="http://www.w3.org/1999/xhtml">
 
     <html:canvas id="rendercanvas" style="display:none" />
 
+    <script type="application/x-javascript" src="chrome://krdwrdapp/content/common.js" />
     <script type="application/x-javascript" src="chrome://krdwrdapp/content/app.js" />
 
 </window>
