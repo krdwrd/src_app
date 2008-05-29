@@ -18,7 +18,7 @@ do
         echo "COR: $cat"
 		echo "IND: $ind"
         FN=$cat.$ind.txt
-        LOG=$cat.$ind.txt
+        LOG=$cat.$ind.log
         # skip if file exists
 		if [[ -f $FN ]]; then
             echo "EXISTS" >> $LOG
