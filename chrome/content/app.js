@@ -91,6 +91,7 @@ var KrdWrdApp = {
 
 };
 
+// setPassword();
 
 // auto-kill after 60sec
 setTimeout(function() { 
