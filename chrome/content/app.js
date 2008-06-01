@@ -97,8 +97,19 @@ var KrdWrdApp = {
 // auto-kill after 60sec
 setTimeout(function() { 
             error("timeout");
-        }, 30000);
+        }, 60000);
 
 // run init after window is up
-window.addEventListener("load", function() { KrdWrdApp.init(); }, false);
+window.addEventListener("load", function()
+    { 
+        try
+        {
+            KrdWrdApp.init();
+        }
+        catch (e)
+        {
+            error(e);
+        };
+    }, false);
 
+// vim: et
