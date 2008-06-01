@@ -58,8 +58,6 @@ var KrdWrdApp = {
       }
       KrdWrdApp.once = true;
 
-      print("URL: " + KrdWrdApp.param.url);
-
       // wait a second for the engine to settle
       setTimeout(KrdWrdApp.dumpPage, 1000); 
   },
@@ -67,6 +65,9 @@ var KrdWrdApp = {
   dumpPage: function()
   {
     var doc = $('browse').contentDocument;
+
+    print("URL: " + doc.location);
+
     try
     {
       // save source code
