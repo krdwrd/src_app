@@ -1,9 +1,17 @@
 // main application object
 
+function merge(filelist)
+{
+    for (f in filelist)
+    {
+        mkBrowser(filelist[f], function (e) { alert(e); });
+    }
+}
+
 var KrdWrdApp = {
 
   // command line parameters
-  param: { outbase: null, grab: null, merge: null, url: 'http://krdwrd.org/', },
+  param: { outbase: null, grab: null, merge: null, url: 'http://krdwrd.org/', files: []},
 
   once: false,
 
@@ -15,21 +23,19 @@ var KrdWrdApp = {
       {
           print("CMD: grab");
 
-          // hook into the browser control
-          var browser = $('browse');
-          browser.addProgressListener(progress_listener(KrdWrdApp.onPageLoad));
-
-          // set target url
-          browser.setAttribute('src', param.url);
+          mkBrowser(param.url, KrdWrdApp.onPageLoad);
       }
       else
       if (param.merge)
       {
           print("CMD: merge");
+
+          merge(param.files);
       }
       else
       {
           print("ERR: no command.");
+
           quit();
       };
   },
@@ -43,12 +49,20 @@ var KrdWrdApp = {
       param.grab = cmdLine.handleFlag("grab", false);
       param.merge = cmdLine.handleFlag("merge", false);
       param.outbase = cmdLine.handleFlagWithParam("out", false);
-      param.url = cmdLine.handleFlagWithParam("url", false) || KrdWrdApp.url;
+      // grabbing
+      if (param.grab)
+          param.url = cmdLine.handleFlagWithParam("url", false) || KrdWrdApp.url;
+      // merging annotations
+      else if (param.merge)
+          for (var i = 0; i<cmdLine.length; i++)
+          {
+              param.files[param.files.length] = cmdLine.getArgument(i);
+          }
 
       return param;
   },
 
-  onPageLoad: function()
+  onPageLoad: function(doc, win)
   {
       // execute only once
       if (KrdWrdApp.once)
@@ -59,13 +73,11 @@ var KrdWrdApp = {
       KrdWrdApp.once = true;
 
       // wait a second for the engine to settle
-      setTimeout(KrdWrdApp.dumpPage, 1000); 
+      setTimeout(function() { KrdWrdApp.dumpPage(doc, win); }, 1000); 
   },
 
-  dumpPage: function()
+  dumpPage: function(doc, win)
   {
-    var doc = $('browse').contentDocument;
-
     print("URL: " + doc.location);
 
     try
@@ -77,7 +89,7 @@ var KrdWrdApp = {
           saveText(source, KrdWrdApp.param.outbase + '.txt');
 
       // save page as png
-      var grab = grabScreen(doc);
+      var grab = grabScreen(win, doc);
       print("PNG: " + (grab != null));
       if (grab)
           saveCanvas(grab, KrdWrdApp.param.outbase + '.png');

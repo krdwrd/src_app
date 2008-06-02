@@ -5,11 +5,6 @@
 xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
 xmlns:html="http://www.w3.org/1999/xhtml">
     
-    <browser id="browse" src="about:blank" flex="1" type="content"
-             style="max-width: 1024px; width: 1024; max-height: 1px;"/>
-
-    <html:canvas id="rendercanvas" style="display:none" />
-
     <script type="application/x-javascript" src="chrome://krdwrdapp/content/common.js" />
     <script type="application/x-javascript" src="chrome://krdwrdapp/content/app.js" />
 
