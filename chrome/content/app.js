@@ -1,11 +1,79 @@
 // main application object
 
+
+function loadnext(filelist, callback)
+{
+    // initialize once, with filelist and callback
+    if (filelist)
+    {
+        this.filelist = filelist;
+        this.index = 0;
+        this.doclist = [];
+        this.callback = callback;
+        this.docdone = false;
+    }
+    // otherwise increment the filelist pointer
+    else
+    {
+        this.index++;
+    }
+
+    // collect documents for returning
+    var ret = this.doclist;
+
+    function handler(doc, win)
+    {
+        ret[ret.length] = doc;
+        loadnext();
+    }
+
+    // have more files
+    if (this.index < this.filelist.length)
+    {
+        mkBrowser(this.filelist[this.index], handler);
+    }
+    // done
+    else if (! this.docdone)
+    {
+        this.docdone = true;
+        this.callback(this.doclist);
+    }
+}
+
+
+function do_merge(docs)
+{
+    var ann = new Array(docs.length);
+    // store krdwrd tags in dom order in ann[document][order]
+    for (var d in docs)
+    {
+        var res = [];
+        traverse(docs[d].documentElement, function (txt, tag) { res[res.length] = tag; });
+        ann[d] = res;
+    }
+    // count tag occurance per element
+    for (var i in ann[0])
+    {
+        var b = new Object();
+        // count in elements
+        for (var d in docs)
+        {
+            if (b[ann[d][i]])
+                b[ann[d][i]] ++;
+            else
+                b[ann[d][i]] = 1;
+        }
+        // TODO determine winner, write results back
+        for (a in b)
+            print(a + " " + b[a]);
+    }
+
+    quit();
+}
+
 function merge(filelist)
 {
-    for (f in filelist)
-    {
-        mkBrowser(filelist[f], function (e) { alert(e); });
-    }
+    loadnext(filelist, do_merge);
 }
 
 var KrdWrdApp = {
