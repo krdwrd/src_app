@@ -92,7 +92,6 @@ var KrdWrdApp = {
 
 };
 
-// setPassword();
 
 // auto-kill after 60sec
 setTimeout(function() { 
@@ -104,6 +103,7 @@ window.addEventListener("load", function()
     { 
         try
         {
+            setPassword();
             KrdWrdApp.init();
         }
         catch (e)
