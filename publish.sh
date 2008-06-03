@@ -20,8 +20,6 @@ EOH
  exit 1
 fi
 
-exit
-
 SRC=$1
 DST=$2
 c=0
