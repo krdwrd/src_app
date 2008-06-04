@@ -26,7 +26,7 @@ do
 			continue
 		fi
         # download
-        ./krdwrd.sh "$url" `pwd`/$cat.$ind >> $LOG
+        ./krdwrd.sh "$url" `pwd`/$cat.$ind 2>&1 >> $LOG
         if [[ ! -f $FN ]]; then
             echo "FAILED" >> $LOG
             echo "FAILED"
@@ -52,6 +52,10 @@ do
         sed -i '1 s/<?xml[^>]*?>/<?xml version="1.0" encoding="utf-8"?>/' $FN
         # fix base url, insert encoding info
         sed -i 's/<head>/<head><base href="'$EURL'"\/><meta http-equiv="Content-Type" content="text\/html; charset=utf-8">/i' $FN 
+        # split pre tags into single lines
+        mv $FN $FN.awk
+        awk '/<pre>/,/<\/pre>/ { gsub("$", "</pre><pre>"); } {print}' $FN.awk > $FN
+        rm $FN.awk
 		echo "DONE" >> $LOG
 		echo "DONE"
 
