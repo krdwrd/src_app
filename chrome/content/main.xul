@@ -6,6 +6,9 @@ xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
 xmlns:html="http://www.w3.org/1999/xhtml">
     
     <script type="application/x-javascript" src="chrome://krdwrdapp/content/common.js" />
+    <script type="application/x-javascript" src="chrome://krdwrdapp/content/browse.js" />
+    <script type="application/x-javascript" src="chrome://krdwrdapp/content/grab.js" />
+    <script type="application/x-javascript" src="chrome://krdwrdapp/content/merge.js" />
     <script type="application/x-javascript" src="chrome://krdwrdapp/content/app.js" />
 
 </window>
