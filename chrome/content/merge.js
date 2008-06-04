@@ -34,12 +34,12 @@ function count_tags(docs, text)
         {
             if (ind > text.length)
             {
-                print(docs[d].location + " has different structure. rejecting.");
+                print(d + " has different structure. rejecting.");
                 tag = null;
             }
             else if (txt.data != text[ind])
             {
-                print(docs[d].location + " has different text. rejecting.");
+                print(d + " has different text. rejecting.");
                 tag = null;
             }
             doctags[d][ind++] = tag;
@@ -63,7 +63,8 @@ function collect_tags(doctags)
             // init counter object
             if (d == 0)
                 collect[elemc] = new Object();
-            else if (! doctags[d][len])
+			// skip invalid docs
+            else if (! doctags[d][len-1])
                 continue;
 
             var tag = doctags[d][elemc];

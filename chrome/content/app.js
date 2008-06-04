@@ -5,8 +5,6 @@ var KrdWrdApp = {
   // command line parameters
   param: { outbase: null, grab: null, merge: null, url: 'http://krdwrd.org/', files: []},
 
-  once: false,
-
   init: function()
   {
       var param = KrdWrdApp.parseCmdLine();
@@ -15,7 +13,7 @@ var KrdWrdApp = {
       {
           print("CMD: grab");
 
-          mkBrowser(param.url, KrdWrdApp.onPageLoad);
+          mkBrowser(param.url, KrdWrdApp.dumpPage);
       }
       else
       if (param.merge)
@@ -54,20 +52,6 @@ var KrdWrdApp = {
       return param;
   },
 
-  onPageLoad: function(doc, win)
-  {
-      // execute only once
-      if (KrdWrdApp.once)
-      {
-          print("WARN: dumper called again.");
-          return;
-      }
-      KrdWrdApp.once = true;
-
-      // wait a second for the engine to settle
-      setTimeout(function() { KrdWrdApp.dumpPage(doc, win); }, 1000); 
-  },
-
   dumpPage: function(doc, win)
   {
     print("URL: " + doc.location);
@@ -88,7 +72,7 @@ var KrdWrdApp = {
     }
     catch (e)
     {
-      error(e);
+      error(format_exception(e));
     };
     print("RES: SUCCESS");
     quit();
@@ -107,12 +91,12 @@ window.addEventListener("load", function()
     { 
         try
         {
-            setPassword();
+            kwProxy();
             KrdWrdApp.init();
         }
         catch (e)
         {
-            error(e);
+            error(format_exception(e));
         };
     }, false);
 
