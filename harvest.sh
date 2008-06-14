@@ -18,6 +18,7 @@ do
 		echo "IND: $ind"
         FN=$cat.$ind.txt
         LOG=$cat.$ind.log
+        rm -f $LOG 2> /dev/null
 		echo "DATE: "`date` >> $LOG
         # skip if file exists
 		if [[ -f $FN ]]; then
