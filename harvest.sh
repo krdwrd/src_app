@@ -26,7 +26,7 @@ do
 			continue
 		fi
         # download
-        ./krdwrd.sh "$url" `pwd`/$cat.$ind 2>&1 >> $LOG
+        ./grab.sh "$url" `pwd`/$cat.$ind 2>&1 >> $LOG
         if [[ ! -f $FN ]]; then
             echo "FAILED" >> $LOG
             echo "FAILED"
