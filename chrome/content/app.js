@@ -20,7 +20,7 @@ var KrdWrdApp = {
       {
           print("CMD: merge");
 
-          open_documents(param.files, do_merge);
+          open_documents(param.files, function (docs) { do_merge(docs, param.outbase); });
       }
       else
       {

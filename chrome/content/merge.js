@@ -1,4 +1,4 @@
-function do_merge(docs)
+function do_merge(docs, outp)
 {
     // the first document is considered the master document.
     // the structure and textual content of the other documents is validated
@@ -16,8 +16,15 @@ function do_merge(docs)
 
     var w = wta(lt);
 
-    print(w);
+    var ind = 0;
+    traverse(master.documentElement, function(node, kw) {
+            var par = node.parentNode;
+            par.className = filterkw(par.className) + " " + w[ind][1];
+            ind++;
+            });
          
+    saveText(master.documentElement.innerHTML, outp);
+
     quit();
 }
 
@@ -63,7 +70,7 @@ function collect_tags(doctags)
             // init counter object
             if (d == 0)
                 collect[elemc] = new Object();
-			// skip invalid docs
+            // skip invalid docs
             else if (! doctags[d][len-1])
                 continue;
 
