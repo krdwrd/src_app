@@ -130,18 +130,21 @@ setTimeout(function() {
             error("timeout");
         }, 60000);
 
+function runkrdwrd()
+{ 
+    try
+    {
+        kwProxy();
+        KrdWrdApp.init();
+    }
+    catch (e)
+    {
+        error(format_exception(e));
+    };
+}
+
 // run init after window is up
-window.addEventListener("load", function()
-    { 
-        try
-        {
-            kwProxy();
-            KrdWrdApp.init();
-        }
-        catch (e)
-        {
-            error(format_exception(e));
-        };
-    }, false);
+window.addEventListener("load", runkrdwrd, false);
+
 
 // vim: et
