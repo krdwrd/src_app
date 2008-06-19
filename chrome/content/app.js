@@ -91,9 +91,12 @@ var KrdWrdApp = {
       return param;
   },
 
-  pipeline: function(docs)
+  pipeline: function(doc, win)
   {
-      error("Not implemented");
+      var res = "";
+      traverse(doc, function (n, t) { res += t[t.length-1] + " " + n.data + "\n"; });
+      saveText(res, KrdWrdApp.param.outbase + '.cl');
+      quit();
   },
 
   dumpPage: function(doc, win)
