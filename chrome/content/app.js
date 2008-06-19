@@ -7,10 +7,17 @@ Usage: ./krdwrd COMMAND [OPTIONS]\n\
 \n\
 Main Commands:\n\
     -grab -url URL\n\
+       Grab document from URL, write html body to PREFIX.txt, save Screenshot\n\
+       in PREFIX.png.\n\
     -merge MASTERFILE FILELIST\n\
-    -dump FILE\n\
+       Using MASTERFILE as the basis, merge all annotation from FILELIST into\n\
+       one single file PREFIX using a simple voting scheme.\n\
+    -pipe FILE\n\
+       Read document from FILE and dump data for the processing pipelines in\n\
+       PREFIX.{cl,viz,struct}\n\
 Options:\n\
     -out PREFIX\n\
+      Basepath for output files (required by all commands)\n\
 \n\
 Note: Always use absolute paths when specifying file names\n\
 ";
@@ -48,11 +55,11 @@ var KrdWrdApp = {
           open_documents(param.files, function (docs) { do_merge(docs, param.outbase); });
       }
       else
-      if (param.dump)
+      if (param.pipe)
       {
-          print("CMD: dump");
+          print("CMD: pipe");
 
-          open_documents(param.dump, function(docs) { error("Not implemented"); });
+          mkBrowser(param.pipe, KrdWrdApp.pipeline);
       }
       else
       {
@@ -69,7 +76,7 @@ var KrdWrdApp = {
       var param = KrdWrdApp.param;
       param.grab = cmdLine.handleFlag("grab", false);
       param.merge = cmdLine.handleFlag("merge", false);
-      param.dump = cmdLine.handleFlagWithParam("dump", false);
+      param.pipe = cmdLine.handleFlagWithParam("pipe", false);
       param.outbase = cmdLine.handleFlagWithParam("out", false);
       // grabbing
       if (param.grab)
@@ -82,6 +89,11 @@ var KrdWrdApp = {
           }
 
       return param;
+  },
+
+  pipeline: function(docs)
+  {
+      error("Not implemented");
   },
 
   dumpPage: function(doc, win)
