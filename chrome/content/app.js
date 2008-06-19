@@ -1,13 +1,38 @@
 // main application object
 
+var USAGE = "\
+KrdWrd XUL Application \n\
+\n\
+Usage: ./krdwrd COMMAND [OPTIONS]\n\
+\n\
+Main Commands:\n\
+    -grab -url URL\n\
+    -merge MASTERFILE FILELIST\n\
+    -dump FILE\n\
+Options:\n\
+    -out PREFIX\n\
+\n\
+Note: Always use absolute paths when specifying file names\n\
+";
+
 var KrdWrdApp = {
 
   // command line parameters
-  param: { outbase: null, grab: null, merge: null, url: 'http://krdwrd.org/', files: []},
+  param: { outbase: null, grab: null, merge: null, 
+           dump: null, url: 'http://krdwrd.org/', files: []},
 
   init: function()
   {
-      var param = KrdWrdApp.parseCmdLine();
+      var param;
+      try
+      {
+          param = KrdWrdApp.parseCmdLine();
+      }
+      catch (e)
+      {
+          print(USAGE);
+          error(e);
+      }
 
       if (param.grab)
       {
@@ -23,10 +48,16 @@ var KrdWrdApp = {
           open_documents(param.files, function (docs) { do_merge(docs, param.outbase); });
       }
       else
+      if (param.dump)
       {
-          print("ERR: no command.");
+          print("CMD: dump");
 
-          quit();
+          open_documents(param.dump, function(docs) { error("Not implemented"); });
+      }
+      else
+      {
+          print(USAGE);
+          error("No command");
       };
   },
 
@@ -38,6 +69,7 @@ var KrdWrdApp = {
       var param = KrdWrdApp.param;
       param.grab = cmdLine.handleFlag("grab", false);
       param.merge = cmdLine.handleFlag("merge", false);
+      param.dump = cmdLine.handleFlagWithParam("dump", false);
       param.outbase = cmdLine.handleFlagWithParam("out", false);
       // grabbing
       if (param.grab)
