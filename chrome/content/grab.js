@@ -32,12 +32,18 @@ function saveText(text, dest)
       // create output stream
       var ost = Components.classes["@mozilla.org/network/file-output-stream;1"].
                     createInstance(Components.interfaces.nsIFileOutputStream);
-      ost.init(file, -1, -1, null);
 
-      // write data & close
-      ost.write(text, text.length);
+      ost.init(file, 0x02 | 0x08 | 0x20, 0664, 0);
 
-      ost.flush();
+      var os = Components.classes["@mozilla.org/intl/converter-output-stream;1"]
+                   .createInstance(Components.interfaces.nsIConverterOutputStream);
+
+      os.init(ost, "UTF-8", 0, '?'.charCodeAt(0));
+
+      os.writeString(text);
+
+      os.close();
+
 };
 
 function grabSource(doc)

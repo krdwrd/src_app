@@ -97,7 +97,7 @@ var KrdWrdApp = {
   pipeline: function(doc, win)
   {
       var res = "";
-      traverse(doc, function (n, t) { res += t[t.length-1] + " " + n.data + "\n"; });
+      traverse(doc, function (n, t, txt) { res += t[t.length-1] + " " + txt + "\n"; });
       saveText(res, KrdWrdApp.param.outbase + '.cl');
       quit();
   },
