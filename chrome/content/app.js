@@ -18,14 +18,16 @@ Main Commands:\n\
 Options:\n\
     -out PREFIX\n\
       Basepath for output files (required by all commands)\n\
+    -kwtags\n\
+      Insert <kw> tags around all text blocks (grab only)\n\
 \n\
-Note: Always use absolute paths when specifying file names\n\
+Note: Always use absolute paths when specifying file names.\n\
 ";
 
 var KrdWrdApp = {
 
   // command line parameters
-  param: { outbase: null, grab: null, merge: null, 
+  param: { outbase: null, grab: null, merge: null, kwtags: null,
            dump: null, url: 'http://krdwrd.org/', files: []},
 
   init: function()
@@ -76,6 +78,7 @@ var KrdWrdApp = {
       var param = KrdWrdApp.param;
       param.grab = cmdLine.handleFlag("grab", false);
       param.merge = cmdLine.handleFlag("merge", false);
+      param.kwtags = cmdLine.handleFlag("kwtags", false);
       param.pipe = cmdLine.handleFlagWithParam("pipe", false);
       param.outbase = cmdLine.handleFlagWithParam("out", false);
       // grabbing
@@ -105,6 +108,8 @@ var KrdWrdApp = {
 
     try
     {
+      if (KrdWrdApp.param.kwtags)
+          kwtext(doc);
       // save source code
       var source = grabSource(doc);
       print("TXT: " + (source != null));
