@@ -10,5 +10,5 @@ then
 	exit 1
 fi
 
-$DIR/krdwrd -grab -url $URL -out $OUT
+$DIR/krdwrd -kwtags -grab -url $URL -out $OUT
 
