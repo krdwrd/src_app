@@ -35,19 +35,21 @@ do
         fi
 		URL=`awk '/URL:/ { print $2; }' $LOG`
         EURL=`echo $URL | sed 's/^\(.*\/\).*$/\1/' | sed 's/\//\\\\\//g' `
-        # determine encoding
+
+        # SKIP: determine encoding
         # 1. try content-type in html
-        ENC=`sed -n 's/^.*charset=\([0-9a-zA-Z_-]*\)".*$/\1/p' $FN | head -n1`
+        #ENC=`sed -n 's/^.*charset=\([0-9a-zA-Z_-]*\)".*$/\1/p' $FN | head -n1`
         # 2. try detectin via file
-        test -n "$ENC" || ENC=`file -i $FN | sed -n 's/.*=\(.*$\)$/\1/p' `
-        test "$ENC" == "unknown" && ENC="utf-8"
+        #test -n "$ENC" || ENC=`file -i $FN | sed -n 's/.*=\(.*$\)$/\1/p' `
+        #test "$ENC" == "unknown" && ENC="utf-8"
         # 3. fall back to utf8
-        test -n "$ENC" || ENC="utf-8"
-        ENC=`echo $ENC | sed 's/latin-\([0-8]\)/latin\1/'`
-        echo "ENC: $ENC"
+        #test -n "$ENC" || ENC="utf-8"
+        #ENC=`echo $ENC | sed 's/latin-\([0-8]\)/latin\1/'`
+        #echo "ENC: $ENC"
         # convert to utf8
-        cp $FN $FN.orig
-        iconv -c -t utf8 -f $ENC $FN.orig -o $FN >> $LOG
+        #cp $FN $FN.orig
+        #iconv -c -t utf8 -f $ENC $FN.orig -o $FN >> $LOG
+
         # replace previous charset definition
         sed -i 's/<meta http-equiv\ *=\ *"content-type"[^>]*>//i' $FN
         sed -i '1 s/<?xml[^>]*?>/<?xml version="1.0" encoding="utf-8"?>/' $FN
