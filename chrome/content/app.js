@@ -109,7 +109,7 @@ var KrdWrdApp = {
     try
     {
       if (KrdWrdApp.param.kwtags)
-          kwtext(doc);
+          kwtext(doc, doc.body);
       // save source code
       var source = grabSource(doc);
       print("TXT: " + (source != null));
