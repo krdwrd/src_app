@@ -5,13 +5,15 @@ then
  cat <<-EOH
 
  Usage:
- `basename $0` SOURCEDIR DESTINATIONDIR
+ `basename $0` SOURCEDIR FILELIST
 
- copy harvested data from SOURCEDIR to DESTINATIONDIR if
- a) png exists
- b) the txt is bigger than 1000 bytes
+ create list urls and filenames of harvested pages in SOURCEDIR
+ suitable for usage in addcorpus.py
+ add a file given:
+ a) the png exists
+ b) the txt is bigger than 2500 bytes
 
- output:
+ debug output:
  not a and not b -> no output
  a and not b -> !
  a and b -> filename
@@ -21,18 +23,21 @@ EOH
 fi
 
 SRC=$1
-DST=$2
+FILELIST=$2
 c=0
+
+test -f $FILELIST && rm $FILELIST
 
 for i in $SRC/*.png
 do
     B=`basename $i .png`
+    test -f $SRC/$B.txt || continue
     W=`wc -c < $SRC/$B.txt`
-    if [[ "$W" -gt 1000 ]]
+    if [[ "$W" -gt 2500 ]]
     then
+        URL=`awk '/^URL:/ { print $2; }' < $SRC/$B.log` 
         echo -n "$B "
-        cp $SRC/$B.png $DST
-        cp $SRC/$B.txt $DST/$B.html
+        echo "$URL `pwd`/$SRC/$B.txt" >> $FILELIST
         let c++
     else
         echo -n "! "
