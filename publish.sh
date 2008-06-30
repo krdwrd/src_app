@@ -32,12 +32,12 @@ for i in $SRC/*.png
 do
     B=`basename $i .png`
     test -f $SRC/$B.txt || continue
-    W=`wc -c < $SRC/$B.txt`
-    if [[ "$W" -gt 2500 ]]
+    W=`wc -w < $SRC/$B.txt`
+    if [[ "$W" -gt 500 && "$W" -lt 6000 ]]
     then
         URL=`awk '/^URL:/ { print $2; }' < $SRC/$B.log` 
         echo -n "$B "
-        echo "$URL `pwd`/$SRC/$B.txt" >> $FILELIST
+        echo "$URL `pwd`/$SRC/$B.html" >> $FILELIST
         let c++
     else
         echo -n "! "
