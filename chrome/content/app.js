@@ -7,19 +7,21 @@ Usage: ./krdwrd COMMAND [OPTIONS]\n\
 \n\
 Main Commands:\n\
     -grab -url URL\n\
-       Grab document from URL, write html body to PREFIX.txt, save Screenshot\n\
+       Grab document from URL, write html body to PREFIX.html, save Screenshot\n\
        in PREFIX.png.\n\
     -merge MASTERFILE FILELIST\n\
        Using MASTERFILE as the basis, merge all annotation from FILELIST into\n\
        one single file PREFIX using a simple voting scheme.\n\
-    -pipe FILE\n\
-       Read document from FILE and dump data for the processing pipelines in\n\
-       PREFIX.{cl,viz,struct}\n\
+    -pipe URL\n\
+       Read document from URL (use file:\/\/) and dump data for the processing\n\
+       pipelines in PREFIX.{cl,viz,struct}\n\
 Options:\n\
     -out PREFIX\n\
       Basepath for output files (required by all commands)\n\
     -kwtags\n\
       Insert <kw> tags around all text blocks (grab only)\n\
+    -text\n\
+      Write text content to PREFIX.txt (grab and pipe)\n\
 \n\
 Note: Always use absolute paths when specifying file names.\n\
 ";
@@ -28,7 +30,8 @@ var KrdWrdApp = {
 
   // command line parameters
   param: { outbase: null, grab: null, merge: null, kwtags: null,
-           dump: null, url: 'http://krdwrd.org/', files: []},
+           dump: null, url: 'http://krdwrd.org/', files: [],
+           text: false},
 
   init: function()
   {
@@ -77,6 +80,7 @@ var KrdWrdApp = {
 
       var param = KrdWrdApp.param;
       param.grab = cmdLine.handleFlag("grab", false);
+      param.text = cmdLine.handleFlag("text", false);
       param.merge = cmdLine.handleFlag("merge", false);
       param.kwtags = cmdLine.handleFlag("kwtags", false);
       param.pipe = cmdLine.handleFlagWithParam("pipe", false);
@@ -96,9 +100,14 @@ var KrdWrdApp = {
 
   pipeline: function(doc, win)
   {
-      var res = "";
-      traverse(doc, function (n, t, txt) { res += t[t.length-1] + " " + txt + "\n"; });
+      var res = extractText(doc, true);
       saveText(res, KrdWrdApp.param.outbase + '.cl');
+      if (KrdWrdApp.param.text)
+      {
+          var txt = extractText(doc, false);
+          print("TXT: " + txt.length + " chars");
+          saveText(txt, KrdWrdApp.param.outbase + '.txt');
+      }
       quit();
   },
 
@@ -110,17 +119,24 @@ var KrdWrdApp = {
     {
       if (KrdWrdApp.param.kwtags)
           kwtext(doc, doc.body);
-      // save source code
+      // save html
       var source = grabSource(doc);
-      print("TXT: " + (source != null));
+      print("HTML: " + (source != null));
       if (source)
-          saveText(source, KrdWrdApp.param.outbase + '.txt');
+          saveText(source, KrdWrdApp.param.outbase + '.html');
 
       // save page as png
       var grab = grabScreen(win, doc);
       print("PNG: " + (grab != null));
       if (grab)
           saveCanvas(grab, KrdWrdApp.param.outbase + '.png');
+
+      if (KrdWrdApp.param.text && source)
+      {
+          var txt = extractText(doc, false);
+          print("TXT: " + txt.length + " chars");
+          saveText(txt, KrdWrdApp.param.outbase + '.txt');
+      }
     }
     catch (e)
     {
