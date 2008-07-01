@@ -100,11 +100,13 @@ var KrdWrdApp = {
 
   pipeline: function(doc, win)
   {
-      var res = extractText(doc, true);
+      print("URL: " + doc.location);
+
+      var res = extractText(doc.body, true);
       saveText(res, KrdWrdApp.param.outbase + '.cl');
       if (KrdWrdApp.param.text)
       {
-          var txt = extractText(doc, false);
+          var txt = extractText(doc.body, false);
           print("TXT: " + txt.length + " chars");
           saveText(txt, KrdWrdApp.param.outbase + '.txt');
       }

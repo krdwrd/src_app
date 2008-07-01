@@ -2,6 +2,7 @@ pref("toolkit.defaultChromeURI", "chrome://krdwrdapp/content/main.xul");
 
 pref("browser.dom.window.dump.enabled", true);
 
+//pref("javascript.enabled", false);
 
 // for auto-adding of passwords:
 
