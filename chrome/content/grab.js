@@ -5,11 +5,10 @@ function saveCanvas(canvas, dest)
                            .createInstance(Components.interfaces.nsILocalFile);
       file.initWithPath(dest);
 
-      // create a data url from the canvas and then create URIs of the source and targets  
+      // create a data url from the canvas and then use io service to create a URI for the source
       var io = Components.classes["@mozilla.org/network/io-service;1"]
                          .getService(Components.interfaces.nsIIOService);
       var source = io.newURI(canvas.toDataURL("image/png", ""), "UTF8", null);
-      var target = io.newFileURI(file)
     
       // prepare to save the canvas data
       var persist = Components.classes["@mozilla.org/embedding/browser/nsWebBrowserPersist;1"]
