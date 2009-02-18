@@ -10,22 +10,25 @@ do
     i=0
     for url in `cat $g`;
     do
-		echo "***************"
+        echo "***************"
         cat=`basename $g .ggx`
         ind=`echo $i | awk '{ printf("%03d", $1);}'`
         let i++
         echo "COR: $cat"
-		echo "IND: $ind"
+        echo "IND: $ind"
         FN=$cat.$ind.html
         LOG=$cat.$ind.log
-        rm -f $LOG 2> /dev/null
-		echo "DATE: "`date` >> $LOG
+
         # skip if file exists
-		if [[ -f $FN ]]; then
+        if [[ -f $FN ]]; then
             echo "EXISTS" >> $LOG
-			echo "EXISTS"
-			continue
-		fi
+            echo "EXISTS"
+            continue
+        else
+            rm -f $LOG 2> /dev/null
+            echo "DATE: "`date` >> $LOG
+        fi
+        
         # download
         ./grab.sh "$url" `pwd`/$cat.$ind 2>&1 >> $LOG
         if [[ ! -f $FN ]]; then
@@ -33,7 +36,8 @@ do
             echo "FAILED"
             continue;
         fi
-		URL=`awk '/URL:/ { print $2; }' $LOG`
+        
+        URL=`awk '/URL:/ { print $2; }' $LOG`
         EURL=`echo $URL | sed 's/^\(.*\/\).*$/\1/' | sed 's/\//\\\\\//g' `
 
         # SKIP: determine encoding
@@ -53,8 +57,10 @@ do
         # replace previous charset definition
         sed -i 's/<meta http-equiv\ *=\ *"content-type"[^>]*>//i' $FN
         sed -i '1 s/<?xml[^>]*?>/<?xml version="1.0" encoding="utf-8"?>/' $FN
+
         # fix base url, insert encoding info
         sed -i 's/<head\([^>]\+\?\)>/<head\1><base href="'$EURL'"\/><meta http-equiv="Content-Type" content="text\/html; charset=utf-8">/i' $FN 
+        
         # split pre tags into single lines
         mv $FN $FN.awk
         awk '/<pre>/,/<\/pre>/ { gsub("$", "</pre><pre>"); } {print}' $FN.awk > $FN
@@ -64,4 +70,3 @@ do
 
     done
 done
-
