@@ -63,7 +63,7 @@ function grabRect(win, doc, x, y, w, h)
     var context = canvas.getContext('2d');
 
     // draw portion of window
-    context.drawWindow(win, x, y, w, h, 'rgb(128,128,128);');
+    context.drawWindow(win, x, y, w, h, 'rgb(255,255,255);');
     return canvas;
 };
 
