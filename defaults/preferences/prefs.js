@@ -9,3 +9,6 @@ pref("browser.dom.window.dump.enabled", true);
 pref("signon.rememberSignons", true);
 pref("signon.expireMasterPassword", false);
 pref("signon.SignonFileName", "signons.txt");
+//pref("nglayout.debug.disable_xul_cache", true);
+//pref("nglayout.debug.disable_xul_fastload", true);
+
