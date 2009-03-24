@@ -11,7 +11,7 @@ then
  suitable for usage in addcorpus.py
  add a file given:
  a) the png exists
- b) the txt is bigger than 2500 bytes
+ b) the txt has between 500 and 6000 'wc -w' words 
 
  debug output:
  not a and not b -> no output
