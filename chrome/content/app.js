@@ -114,15 +114,18 @@ var KrdWrdApp = {
   {
       print("URL: " + doc.location);
 
+      var res = extractTags(doc.body);
+      saveText(res, KrdWrdApp.param.outbase + '.gold');
+
       var res = extractViz(doc.body);
       saveText(res, KrdWrdApp.param.outbase + '.viz');
 
-      var res = extractText(doc.body, false);
+      var res = extractText(doc.body);
       saveText(res, KrdWrdApp.param.outbase + '.cl');
 
       if (KrdWrdApp.param.text)
       {
-          var txt = extractText(doc.body, false);
+          var txt = extractText(doc.body);
           print("TXT: " + txt.length + " chars");
           saveText(txt, KrdWrdApp.param.outbase + '.txt');
       }
