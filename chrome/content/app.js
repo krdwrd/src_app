@@ -14,7 +14,7 @@ Main Commands:\n\
        one single file PREFIX using a simple voting scheme.\n\
     -pipe URL\n\
        Read document from URL (use file:\/\/) and dump data for the processing\n\
-       pipelines in PREFIX.{cl,viz,struct}\n\
+       pipelines in PREFIX.{cl,viz}\n\
 Options:\n\
     -out PREFIX\n\
       Basepath for output files (required by all commands)\n\
@@ -114,8 +114,12 @@ var KrdWrdApp = {
   {
       print("URL: " + doc.location);
 
-      var res = extractText(doc.body, true);
+      var res = extractViz(doc.body);
+      saveText(res, KrdWrdApp.param.outbase + '.viz');
+
+      var res = extractText(doc.body, false);
       saveText(res, KrdWrdApp.param.outbase + '.cl');
+
       if (KrdWrdApp.param.text)
       {
           var txt = extractText(doc.body, false);
