@@ -22,6 +22,14 @@ Options:\n\
       Insert <kw> tags around all text blocks (grab only)\n\
     -text\n\
       Write text content to PREFIX.txt (grab and pipe)\n\
+    -sloppy\n\
+      Ignore differences in text content during merge (merge only)\n\
+    -stats\n\
+      Output statistics (merge only)\n\
+    -victor\n\
+      victor export\n\
+    -verbose\n\
+      Verbose (merge only)\n\
 \n\
 Note: Always use absolute paths when specifying file names.\n\
 ";
@@ -31,7 +39,7 @@ var KrdWrdApp = {
   // command line parameters
   param: { outbase: null, grab: null, merge: null, kwtags: null,
            dump: null, url: 'http://krdwrd.org/', files: [],
-           text: false},
+           text: false, sloppy: false, stats: false, victor: false, verbose: false},
 
   init: function()
   {
@@ -81,6 +89,10 @@ var KrdWrdApp = {
       var param = KrdWrdApp.param;
       param.grab = cmdLine.handleFlag("grab", false);
       param.text = cmdLine.handleFlag("text", false);
+      param.sloppy = cmdLine.handleFlag("sloppy", false);
+      param.stats = cmdLine.handleFlag("stats", false);
+      param.victor = cmdLine.handleFlag("victor", false);
+      param.verbose = cmdLine.handleFlag("verbose", false);
       param.merge = cmdLine.handleFlag("merge", false);
       param.kwtags = cmdLine.handleFlag("kwtags", false);
       param.pipe = cmdLine.handleFlagWithParam("pipe", false);
@@ -154,7 +166,7 @@ var KrdWrdApp = {
 // auto-kill after 60sec
 setTimeout(function() { 
             error("timeout");
-        }, 60000);
+        }, 120000);
 
 function runkrdwrd()
 { 
