@@ -69,8 +69,25 @@ function grabRect(win, doc, x, y, w, h)
 
 function grabScreen(win, doc)
 {
-    // grab whole document
-    return grabRect(win, doc, 0, 0, doc.width, doc.height);
+    function maxh(elem, h)
+    // determine document height by max'ing over all nodes
+    {
+        if (elem.getBoundingClientRect)
+        {
+            cr = elem.getBoundingClientRect();
+            mh = (cr.top || 0) + (cr.height || elem.clientHeight);
+            h = Math.max(mh, h);
+        }
+        for (c in elem.childNodes)
+        {
+            ch = maxh(elem.childNodes[c], h);
+            h = Math.max(ch, h);
+        }
+        return h;
+    }
+    var h = Math.round(maxh(doc, doc.height));
+
+    return grabRect(win, doc, 0, 0, doc.width, h);
 };
 
 // vim: et
