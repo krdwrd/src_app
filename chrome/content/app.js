@@ -14,14 +14,14 @@ Main Commands:\n\
        one single file PREFIX using a simple voting scheme.\n\
     -pipe URL\n\
        Read document from URL (use file:\/\/) and dump data for the processing\n\
-       pipelines in PREFIX.{cl,viz}\n\
+       pipelines in PREFIX.{cl,viz,xy,png}\n\
 Options:\n\
     -out PREFIX\n\
       Basepath for output files (required by all commands)\n\
     -kwtags\n\
       Insert <kw> tags around all text blocks (grab only)\n\
     -text\n\
-      Write text content to PREFIX.txt (grab and pipe)\n\
+      Write text content to PREFIX.txt (grab only)\n\
     -sloppy\n\
       Ignore differences in text content during merge (merge only)\n\
     -stats\n\
@@ -114,11 +114,11 @@ var KrdWrdApp = {
   {
       print("URL: " + doc.location);
 
-      var res = extractTags(doc.body);
-      saveText(res, KrdWrdApp.param.outbase + '.gold');
-
-      var res = extractViz(doc.body);
+      var res = extractDom(doc.body);
       saveText(res, KrdWrdApp.param.outbase + '.viz');
+
+      var res = extractCoord(doc.body);
+      saveText(res, KrdWrdApp.param.outbase + '.xy');
 
       var res = extractText(doc.body);
       saveText(res, KrdWrdApp.param.outbase + '.cl');
@@ -126,12 +126,9 @@ var KrdWrdApp = {
       var res = grabScreen(win, doc);
       saveCanvas(res, KrdWrdApp.param.outbase + '.png');
 
-      if (KrdWrdApp.param.text)
-      {
-          var txt = extractText(doc.body);
-          print("TXT: " + txt.length + " chars");
-          saveText(txt, KrdWrdApp.param.outbase + '.txt');
-      }
+      var res = extractTags(doc.body);
+      saveText(res, KrdWrdApp.param.outbase + '.gold');
+
       quit();
   },
 
