@@ -123,6 +123,9 @@ var KrdWrdApp = {
       var res = extractText(doc.body);
       saveText(res, KrdWrdApp.param.outbase + '.cl');
 
+      var res = grabScreen(win, doc);
+      saveCanvas(res, KrdWrdApp.param.outbase + '.png');
+
       if (KrdWrdApp.param.text)
       {
           var txt = extractText(doc.body);
