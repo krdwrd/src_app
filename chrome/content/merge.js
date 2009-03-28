@@ -63,18 +63,19 @@ function count_tags(docs, text)
             }
             else if (txt.data != text[ind])
             {
-                print(d + ' has different text. ');
                 if (KrdWrdApp.param.verbose)
                 {
+                    print(d + ' has different text. ');
+
                     print(' <'+ text[ind]);
                     print(' >'+ txt.data);
                     print(' :' + tag);
                 }
-                if (KrdWrdApp.param.sloppy)
+                if (KrdWrdApp.param.sloppy && KrdWrdApp.param.verbose)
                 {
                     print(' ...but accepting.');
                 } else {
-                    print(' ...rejecting.');
+                    if (KrdWrdApp.param.verbose) print(' ...rejecting.');
                     // other than strucdiff txtdiff is not that bad...
                     // ...hence we might want to use this later on
                     tag = 'krdwrd-tag-mrgerr';
@@ -104,7 +105,7 @@ function collect_tags(doctags)
 				       { return x !== null;});
 			if (! nnul)
 			{
-                print(' # skipping: ' + d);
+                if (KrdWrdApp.param.verbose) print(' # skipping: ' + d);
                 continue;
             }
 
@@ -210,10 +211,15 @@ function collect_stats(docs, ct, w, text)
         if (rows_tmp > rows) rows = rows_tmp;
     }
 
-    for (var r=0; r < w.length; r++)
+    // write 1st and 2nd column: #chars, winner-tag
+    for (var r=0; r < rows; r++)
     {
-        chars = r > text.length-1 ? undefined : text[r].length; 
-        coding_table[r][0] =  chars + '\t' + w[r][1]; 
+        chars = winner = undefined;
+
+        try { chars = text[r].length; } catch (err) {}
+        try { winner = w[r][1]; } catch (err) {}
+
+        coding_table[r][0] =  chars + '\t' + winner; 
     }
 
     for (var c=0; c < cols; c++)
@@ -224,6 +230,7 @@ function collect_stats(docs, ct, w, text)
         }
     }
 
+    // write columns 3 and bejond: tags of subms 
     for (var r=0; r < rows; r++)
     {
         var line = '';
