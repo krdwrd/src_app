@@ -71,9 +71,9 @@ function count_tags(docs, text)
                     print(' >'+ txt.data);
                     print(' :' + tag);
                 }
-                if (KrdWrdApp.param.sloppy && KrdWrdApp.param.verbose)
+                if (KrdWrdApp.param.sloppy)
                 {
-                    print(' ...but accepting.');
+                    if (KrdWrdApp.param.verbose) print(' ...but accepting.');
                 } else {
                     if (KrdWrdApp.param.verbose) print(' ...rejecting.');
                     // other than strucdiff txtdiff is not that bad...
@@ -164,12 +164,13 @@ function wta(collect)
                     tens += 1;
                 bin = tens * 10;
                 win[c] = [max_count, max_elem != 'undefined' ? max_elem + '-' + bin : undefined];
-			}
-            win[c] = [max_count, max_elem];
+            } else {
+                win[c] = [max_count, max_elem];
+            }
         }
     } 
-	else 
-	{
+    else 
+    {
         print('# no results left for merging.');
     }
 
