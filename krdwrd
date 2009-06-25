@@ -1,3 +1,11 @@
 #!/bin/sh
 
-xvfb-run -s '-screen 0 1024x768x24' xulrunner application.ini $@
+KW_DISPLAY=66
+KW_SCREEN=0
+
+if ! [ $(pgrep -f "Xvfb :${KW_DISPLAY} -screen ${KW_SCREEN}") ]; then
+    Xvfb :${KW_DISPLAY} -screen ${KW_SCREEN} 1024x768x24 & 
+fi
+
+DISPLAY=:${KW_DISPLAY}.${KW_SCREEN} xulrunner application.ini $@
+#xvfb-run -s '-screen 0 1024x768x24' xulrunner application.ini $@
