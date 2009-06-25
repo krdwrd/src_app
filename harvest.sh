@@ -6,6 +6,9 @@ export LANG=en_US.UTF-8
 
 for g in $@;
 do
+    # sanity check
+    [[ $(sort -u ${g} | diff -q - ${g}) ]] && echo "${g} has duplicate lines - omitting." && break
+   
     echo $g
     i=0
     for url in `cat $g`;
