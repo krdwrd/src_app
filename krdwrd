@@ -4,7 +4,7 @@ KW_DISPLAY=66
 KW_SCREEN=0
 
 if ! [ $(pgrep -f "Xvfb :${KW_DISPLAY} -screen ${KW_SCREEN}") ]; then
-    Xvfb :${KW_DISPLAY} -screen ${KW_SCREEN} 1024x768x24 & 
+    Xvfb :${KW_DISPLAY} -screen ${KW_SCREEN} 1024x768x24 > Xvfb.log 2>&1 & 
 fi
 
 DISPLAY=:${KW_DISPLAY}.${KW_SCREEN} xulrunner application.ini $@
