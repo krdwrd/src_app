@@ -154,7 +154,7 @@ var KrdWrdApp = {
 
       if (KrdWrdApp.param.text && source)
       {
-          var txt = extractText(doc, false);
+          var txt = extractText(doc.body, false);
           print("TXT: " + txt.length + " chars");
           saveText(txt, KrdWrdApp.param.outbase + '.txt');
       }
