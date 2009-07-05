@@ -2,7 +2,7 @@
 
 PROFILE=$1
 
-if [[ ! -f "$PROFILE/cert8.db" ]]
+if [ ! -f "$PROFILE/cert8.db" ]
 then
 	echo "Usage: ./`basename $0` <krdwrd.org profile directory>"
 	exit 1
