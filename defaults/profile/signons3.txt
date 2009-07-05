@@ -1,0 +1,18 @@
+#2e
+.
+moz-proxy://proxy.krdwrd.org:8080 (krdwrd Off-Line Proxy)
+
+MDIEEPgAAAAAAAAAAAAAAAAAAAEwFAYIKoZIhvcNAwcECP0dwTxqn3RhBAi7C9EawTXPvQ==
+*
+MDIEEPgAAAAAAAAAAAAAAAAAAAEwFAYIKoZIhvcNAwcECLo1NYdK6aVDBAiR8MqdintPDg==
+
+---
+.
+https://krdwrd.org (krdwrd.org login)
+
+MDIEEPgAAAAAAAAAAAAAAAAAAAEwFAYIKoZIhvcNAwcECP0dwTxqn3RhBAi7C9EawTXPvQ==
+*
+MDIEEPgAAAAAAAAAAAAAAAAAAAEwFAYIKoZIhvcNAwcECLo1NYdK6aVDBAiR8MqdintPDg==
+
+---
+.

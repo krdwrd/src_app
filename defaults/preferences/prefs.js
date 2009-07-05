@@ -11,7 +11,7 @@ pref("dom.max_script_run_time", 180);
 
 pref("signon.rememberSignons", true);
 pref("signon.expireMasterPassword", false);
-pref("signon.SignonFileName", "signons.txt");
+pref("signon.SignonFileName3", "signons3.txt");
 //pref("nglayout.debug.disable_xul_cache", true);
 //pref("nglayout.debug.disable_xul_fastload", true);
 //pref("javascript.options.showInConsole", true);
