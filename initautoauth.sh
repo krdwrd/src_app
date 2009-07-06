@@ -6,7 +6,7 @@
 # the app might get struck by bug https://bugzilla.mozilla.org/show_bug.cgi?id=230190 
 # using (code of the) autoauth extension 
 #  - http://code.google.com/p/autoauth/
-#  - http://code.google.com/p/autoauth/
+#  - https://addons.mozilla.org/en-US/firefox/addon/4949 
 # helps as a hack!
 
 svn checkout http://autoauth.googlecode.com/svn/trunk/ extensions/autoauth-read-only
