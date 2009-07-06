@@ -1,5 +1,8 @@
 #!/bin/sh
 
+# initialize the app's cert DB with the CAcert CA
+# (should not be necessary as of r388 but doesn't hurt either)
+
 PROFILE=$1
 
 if [ ! -f "$PROFILE/cert8.db" ]
