@@ -9,7 +9,7 @@
 #  - https://addons.mozilla.org/en-US/firefox/addon/4949 
 # helps as a hack!
 
-svn checkout http://autoauth.googlecode.com/svn/trunk/ extensions/autoauth-read-only
+svn checkout -r 2 http://autoauth.googlecode.com/svn/trunk/ extensions/autoauth-read-only
 ln -s ../../extensions/autoauth-read-only/autoauth/defaults/preferences/autoauth-prefs.js defaults/preferences/
 ln -ns ../extensions/autoauth-read-only/autoauth/chrome/content/ ./chrome/autoauth
 
