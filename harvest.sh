@@ -24,6 +24,7 @@ do
 
         # skip if file exists
         if [[ -f $FN ]]; then
+            echo "DATE: "`date` >> $LOG
             echo "EXISTS" >> $LOG
             echo "EXISTS"
             continue
