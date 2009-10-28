@@ -10,6 +10,8 @@
 # helps as a hack!
 
 svn checkout -r 2 http://autoauth.googlecode.com/svn/trunk/ extensions/autoauth-read-only
+svn checkout http://autoauth.googlecode.com/svn/trunk/autoauth/defaults extensions/autoauth-read-only/autoauth/defaults
+
 ln -s ../../extensions/autoauth-read-only/autoauth/defaults/preferences/autoauth-prefs.js defaults/preferences/
 ln -ns ../extensions/autoauth-read-only/autoauth/chrome/content/ ./chrome/autoauth
 
