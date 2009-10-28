@@ -17,6 +17,12 @@ pref("signon.SignonFileName3", "signons3.txt");
 //pref("javascript.options.showInConsole", true);
 //pref("javascript.options.strict", true);
 
+// allow cookies - 0:yes* 1:from originating server 2:no
+//pref("network.cookie.cookieBehavior", 2);
+
+// display images - 1:yes* 2:block all imgs 3:block 3rd prty imgs
+//pref("permissions.default.image", 2);
+
 pref("security.warn_entering_secure", false);
 pref("security.warn_entering_secure.show_once", false);
 pref("security.warn_entering_weak", false);
