@@ -10,7 +10,10 @@ dom.extract = function(doc)
         var res = '';
         //max_treelen = 20;
         //max_clientrect = 10;
-    
+
+        // count the tags /between/ the relevant text nodes
+        internodes = 0;
+
         function rec(node, paren)
         {
             // extract features
@@ -45,7 +48,19 @@ dom.extract = function(doc)
                 // total html source character count
                 r[r.length] = doc.innerHTML.length / 10000;
     
-                res += r.join(' ') + "\n";
+
+                // BTE like features
+                // number of non-WS delimited tokens (~= words) in the node's resulting text
+                r[r.length] = node.data.replace( /^\s+/g, "").replace( /\s+$/g, "").replace( /\n/g, " ").replace(/  +/g, " ").split(/\s/).length;
+                // distance - in nodes - to the /last/ text node
+                res += r.join(' ') + ' ' + internodes + "\n";
+
+                // reset the counter
+                internodes = 0;
+            } 
+            else if (node.nodeName != "#comment" && node.nodeName != "SCRIPT" && node.nodeName != "KW" && node.nodeName != undefined)
+            {
+                internodes++;
             }
             // recurse to children
             var nparen = paren.slice();
