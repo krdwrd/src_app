@@ -1,0 +1,129 @@
+txt.prototype = new pipe();
+txt.prototype.Constructor = txt();
+
+function txt() 
+{
+}
+
+txt.extract = function(doc)
+{
+    traverse(doc, function(node, kw) 
+        {
+            node.parentNode.className = filterkw(node.parentNode.className) + kw;
+        }, "krdwrd-tag-1"
+    );
+
+    // returns a string of '\n'-s that should be put at /this/ position in txt output:
+    // usually, one but for Headings an extra one could be nice.
+    wsNode = function (node)
+    {
+        var retVal = ""; 
+        var nn = node.nodeName + "";
+
+        if (nn == "P" || 
+                nn == "DIV" || 
+                nn == "BR" || 
+                nn == "BLOCKQUOTE" || 
+                nn == "DL" || 
+                nn == "UL" || 
+                nn == "OL" || 
+                nn == "LI" || 
+                nn == "TR" || 
+                nn == "TH" || 
+                nn == "TD" || 
+                nn == "TABLE" || 
+                nn == "OPTION" || 
+                nn == "PRE") retVal = "\n";
+        else if (nn == "H1" || 
+                nn == "H2" || 
+                nn == "H3" || 
+                nn == "H4" || 
+                nn == "H5" || 
+                nn == "H6") retVal = "\n\n";
+
+        return retVal;
+    };
+
+    var res = "";
+    var txt = [];
+    var lnind = 0;
+
+    function myTraverse(body)
+    {
+        var txind = 0;
+        var line = "";
+        var lastSibling = 0;
+
+        function prtLines()
+        {
+            for (i=0; i < txind; i++) txt[txt.length] = 
+                // append the lines - as often as nodes has been passed by - and make
+                // sure that there are no WS at the beginning, the end or more than 
+                // one successive one within a line.
+                line.replace( /^\s+/, "").replace( /\s+$/, "").replace( /\s+/g, " ");
+            line = "";
+            txind = 0;
+        };
+
+        function rec(node)
+        {
+            // either /this/ node is BR-like or
+            // during the last run the last sibling of a WS node had been visited.
+            if (wsNode(node) != "" || lastSibling == 1)
+            {
+                prtLines();
+            }
+            lastSibling = 0;
+
+            if (node.nodeName == "#text")
+            {
+                // is this a text node that is recognized by /the other/ pipelines?
+                var tx = node.data.replace( /^\s+/g, "").replace( /\s+$/g, "").replace( /\n/g, " ").replace(/  +/g, " ");
+                if (tx)
+                {
+                    txind++;
+
+                    // makes sure to introduce a WS, e.g. for <H1>foo</H1>bar
+                    // ----
+                    // foo
+                    // bar
+                    // ----
+                    // we assume that the text node is surrounded by <kw> tags...
+                    // ...and may still not get all cases!
+                    // TODO: make sure to cover /all/ cases - or at least explicitly don't cover others!
+                    np = node.parentNode;
+                    npp = node.parentNode.parentNode;
+                    if (npp != null && wsNode(npp) != "" && np.nextElementSibling == null)
+                        lastSibling = 1;
+                }
+
+                // keep the formatting close to the rendered output, e.g.
+                // do not discard ' ' between two <A> tags; or else the text of the links sticks together.
+                var formttx = node.data.replace( /\n/g, " ")
+                    .replace( /[\t ]+/g, " ")
+                    .replace( /^\s+$/g, " ")
+                    .replace( /^[\t ]+/g, " ")
+                    .replace( /[\t ]+$/g, " ");
+
+                if (formttx) line += formttx;
+            } 
+            
+            for (child in node.childNodes)
+            {
+                cnode = node.childNodes[child];
+                if (cnode.nodeName != "SCRIPT")
+                    rec(cnode);
+            }
+        };
+        rec(body);
+        // the last line would still be in 'line' and would not have been printed, yet. do this now: 
+        prtLines();
+    }
+    myTraverse(doc);
+
+    for (t in txt) res += txt[t] + "\n";
+    return res;
+}
+
+
+// vim: filetype=javascript
