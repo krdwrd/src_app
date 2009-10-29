@@ -10,5 +10,6 @@ xmlns:html="http://www.w3.org/1999/xhtml">
     <script type="application/x-javascript" src="chrome://krdwrdapp/content/grab.js" />
     <script type="application/x-javascript" src="chrome://krdwrdapp/content/merge.js" />
     <script type="application/x-javascript" src="chrome://krdwrdapp/content/app.js" />
+    <script type="application/x-javascript" src="chrome://krdwrdapp/content/pipes/loader.js" />
 
 </window>

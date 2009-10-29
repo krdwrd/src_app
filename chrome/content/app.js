@@ -1,5 +1,4 @@
 // main application object
-
 var USAGE = "\
 KrdWrd XUL Application \n\
 \n\
@@ -114,14 +113,19 @@ var KrdWrdApp = {
   {
       print("URL: " + doc.location);
 
-      var res = extractDom(doc.body);
-      saveText(res, KrdWrdApp.param.outbase + '.dom');
+      for(var propName in pipes)
+      {
+          if(typeof(pipes[propName]) != "undefined")
+          {
+              if (KrdWrdApp.param.verbose)
+              {
+                  print("# processing: " + propName);
+              }
 
-      var res = extractCoord(doc.body);
-      saveText(res, KrdWrdApp.param.outbase + '.xy');
-
-      var res = extractText(doc.body);
-      saveText(res, KrdWrdApp.param.outbase + '.cl');
+              var res = eval("pipes."+propName+".extract(doc.body)");
+              saveText(res,KrdWrdApp.param.outbase + '.' + propName);
+          }
+      }
 
       var res = grabScreen(win, doc);
       saveCanvas(res, KrdWrdApp.param.outbase + '.png');
