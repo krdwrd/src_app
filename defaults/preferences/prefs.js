@@ -1,4 +1,5 @@
 pref("toolkit.defaultChromeURI", "chrome://krdwrdapp/content/main.xul");
+// pref("toolkit.singletonWindowType", "KrdWrdApp");
 
 pref("browser.dom.window.dump.enabled", true);
 

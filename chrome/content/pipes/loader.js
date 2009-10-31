@@ -8,6 +8,13 @@ function pipe()
 }
 
 var pipes = { };
+psize = function (phash) {
+    var len = 0; 
+    for (var elems in phash) {
+        len++;
+    }
+    return len;
+}
 
 // get the chrome directory
 var file = Components.classes["@mozilla.org/file/directory_service;1"].
@@ -20,14 +27,19 @@ file.append("content");file.append("pipes");
 var loader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
     .getService(Components.interfaces.mozIJSSubScriptLoader);
 
-// load files ending in ".pipe" as scripts into global scope
+// load files ending in ".pipe" as scripts into pipes scope
 filesEnum = file.directoryEntries;
+
 while (filesEnum.hasMoreElements())
 {
     fileName = filesEnum.getNext().QueryInterface(Components.interfaces.nsILocalFile).leafName;
+
     if (fileName.substring(fileName.lastIndexOf("."),fileName.length) == ".pipe")
     {
-        print("DJS: "+fileName);
         loader.loadSubScript("chrome://krdwrdapp/content/pipes/"+fileName, pipes);
+
+        if (psize(pipes) == 1) dump("DJS: "+fileName);
+        else dump(", "+fileName);
     }
 }
+if (psize(pipes) > 0) dump("\n");

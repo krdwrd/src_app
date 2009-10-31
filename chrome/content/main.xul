@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 
-<window id="main" title="My App" width="1024" height="768"
+<window id="main" title="My App" width="1024" height="768" windowtype="KrdWrdApp"
 xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
 xmlns:html="http://www.w3.org/1999/xhtml">
     
@@ -10,6 +10,8 @@ xmlns:html="http://www.w3.org/1999/xhtml">
     <script type="application/x-javascript" src="chrome://krdwrdapp/content/grab.js" />
     <script type="application/x-javascript" src="chrome://krdwrdapp/content/merge.js" />
     <script type="application/x-javascript" src="chrome://krdwrdapp/content/app.js" />
+
+    <script type="application/x-javascript" src="chrome://krdwrdapp/content/cmdline.js" />
     <script type="application/x-javascript" src="chrome://krdwrdapp/content/pipes/loader.js" />
 
 </window>
