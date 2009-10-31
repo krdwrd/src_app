@@ -6,3 +6,6 @@ KW_XVFB=true # false
 
 XULRUNNER=xulrunner-1.9.2
 APP=~/krdwrd/trunk/src/app
+
+KW_CMD=${APP}/krdwrd
+KW_TMOUT=15

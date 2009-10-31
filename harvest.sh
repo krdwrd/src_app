@@ -34,7 +34,7 @@ do
         fi
         
         # download
-        ./grab.sh "$url" `pwd`/$cat.$ind 2>&1 >> $LOG
+        $(dirname $0)/grabf.sh "$url" `pwd`/$cat.$ind 2>&1 >> $LOG
         if [[ ! -f $FN ]]; then
             echo "FAILED" >> $LOG
             echo "FAILED"
