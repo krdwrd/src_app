@@ -1,0 +1,8 @@
+# example config file for scripts running the KrdWrdApp
+
+KW_DISPLAY=66
+KW_SCREEN=0 
+KW_XVFB=true # false
+
+XULRUNNER=xulrunner-1.9.2
+APP=~/krdwrd/trunk/src/app
