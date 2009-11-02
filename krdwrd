@@ -1,18 +1,19 @@
 #!/bin/bash
 
 CONFIG=$(dirname $0)/config.app
-CMD=$(basename $0)
-
 if [ ! -f ${CONFIG} ]; then
-    echo ${CMD}: Adapt FILE:config.dist and save it as $(basename ${CONFIG}) 
+    echo $(basename $0): Adapt FILE:config.dist and save it as $(basename ${CONFIG}) 
     exit 1
 else
     . ${CONFIG}
 fi
 
-if [[ ${KW_XVFB} == "true" && ! $(pgrep -f "Xvfb :${KW_DISPLAY} -screen ${KW_SCREEN}") ]]; then
-    Xvfb :${KW_DISPLAY} -screen ${KW_SCREEN} 1024x768x24 > Xvfb.log 2>&1 & 
-    echo ${CMD}: Started Xvfb, DISPLAY is :${KW_DISPLAY}.${KW_SCREEN}
+if [[ ${KW_XVFB} == "true" ]]; then
+        DISPLAY=:${KW_DISPLAY}.${KW_SCREEN}
+        if [[ ! $(pgrep -f "Xvfb :${KW_DISPLAY} -screen ${KW_SCREEN}") ]]; then
+            Xvfb :${KW_DISPLAY} -screen ${KW_SCREEN} 1024x768x24 > Xvfb.log 2>&1 & 
+            echo $(basename $0): Started Xvfb, DISPLAY is $DISPLAY
+        fi
 fi
 
-DISPLAY=:${KW_DISPLAY}.${KW_SCREEN} ${XULRUNNER} $APP/application.ini $@
+${XULRUNNER} $APP/application.ini $@
