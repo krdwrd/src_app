@@ -15,7 +15,7 @@ do
     do
         echo "***************"
         cat=`basename $g .ggx`
-        ind=`echo $i | awk '{ printf("%03d", $1);}'`
+        ind=`echo $i | awk '{ printf("%04d", $1);}'`
         let i++
         echo "COR: $cat"
         echo "IND: $ind"
