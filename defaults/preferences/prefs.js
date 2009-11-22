@@ -15,6 +15,7 @@ pref("signon.expireMasterPassword", false);
 pref("signon.SignonFileName3", "signons3.txt");
 //pref("nglayout.debug.disable_xul_cache", true);
 //pref("nglayout.debug.disable_xul_fastload", true);
+pref("nglayout.initialpaint.delay", 2000);
 //pref("javascript.options.showInConsole", true);
 //pref("javascript.options.strict", true);
 
