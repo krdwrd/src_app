@@ -18,6 +18,7 @@ waitforapp() {
     until [[ ${line} == "APP: READY" ]]
     do 
         read -t ${KW_TMOUT} line < ${FIFO}; 
+
         if [[ $? != 0 ]]; then 
             eval ${KILLALL} && sleep 1;
             break; 
@@ -25,6 +26,8 @@ waitforapp() {
             echo ${line};
             break;
         fi
+
+        echo ${line};
     done
     line=""
 }
