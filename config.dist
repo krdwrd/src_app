@@ -21,8 +21,10 @@ waitforapp() {
         if [[ $? != 0 ]]; then 
             eval ${KILLALL} && sleep 1;
             break; 
+        elif [[ ${line:0:8} == "RES: ERR" ]]; then
+            echo ${line};
+            break;
         fi
-        echo ${line};
     done
     line=""
 }
