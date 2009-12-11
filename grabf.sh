@@ -19,7 +19,7 @@ then
 fi
 
 #KW_CMD="xulrunner-1.9.2 application.ini"
-RUNCMD="$KW_CMD -kwtags -text -grab -url $URL -out $OUT -follow ${USEPROXY}"
+RUNCMD="$KW_CMD -kwtags -text -grab -url "$URL" -out "$OUT" -follow"
 
 $RUNCMD > $FIFO &
 waitforapp

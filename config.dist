@@ -1,18 +1,38 @@
+###
 # example config file for scripts running the KrdWrdApp
+#
 
 KW_DISPLAY=66
 KW_SCREEN=0 
 KW_XVFB=true # false
 
-XULRUNNER=xulrunner-1.9.2
+XULRUNNER=~/krdwrd/trunk/external/XULRunner/xulrunner
 APP=~/krdwrd/trunk/src/app
 
-KW_CMD=${APP}/krdwrd
+# notes on the proxy setting:
+# A)
+# '-proxyenv' will trigger use of your system-settings, i.e.
+# usually, something like http_proxy ENV vars.
+# you may just set them here, as well.
+# B)
+# this settings is only used in /some/ contexts!
+
+# export http_proxy=""
+# export https_proxy=${http_proxy}
+USEPROXY="-proxyenv" # ""
+
+KW_CMD="${APP}/krdwrd ${USEPROXY}"
 KW_TMOUT=15
 
-http_proxy=""
-https_proxy=${http_proxy}
-USEPROXY="-proxyenv" # ""
+#
+# end of config -- you probably need not change anything below...
+###
+
+
+
+###
+# tiny things for convenience
+#
 
 waitforapp() {
     until [[ ${line} == "APP: READY" ]]
