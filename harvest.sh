@@ -3,6 +3,7 @@
 # takes: list of files of url lists (ending in .ggx)
 
 export LANG=en_US.UTF-8
+RETRIES=3
 
 for g in $@;
 do
@@ -28,8 +29,11 @@ do
             echo "EXISTS" >> $LOG
             echo "EXISTS"
             continue
+        elif [[ -f $LOG && $(grep -cE "^FAILED$" ${LOG}) -ge ${RETRIES} ]]; then 
+            echo "CAPITULATED"
+            continue
         else
-            rm -f $LOG 2> /dev/null
+            # rm -f $LOG 2> /dev/null
             echo "DATE: "`date` >> $LOG
         fi
         
