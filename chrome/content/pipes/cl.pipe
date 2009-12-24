@@ -5,13 +5,13 @@ function cl()
 {
 }
 
-    cl.extract = function(doc)
-    {
-        var res = '';
-        f = function (n, t, txt) { res += txt + "\n"; };
-        traverse(doc, f);
-        return res;
-    }
+cl.extract = function(doc)
+{
+    var res = '';
+    f = function (n, t, txt) { res += txt + "\n"; };
+    traverse(doc, f);
+    return res;
+}
 
 
 // vim: filetype=javascript
