@@ -6,77 +6,79 @@ function dom()
 }
 
 dom.extract = function(doc)
+{
+    var res = '';
+    //max_treelen = 20;
+    //max_clientrect = 10;
+
+    function rec(node, paren)
     {
-        var res = '';
-        //max_treelen = 20;
-        //max_clientrect = 10;
-
-        // count the tags /between/ the relevant text nodes
-        internodes = 0;
-
-        function rec(node, paren)
+        // extract features
+        r = [];
+        if ((node.nodeName == "#text") &&
+            node.data.replace( /^\s+/g, "").replace( /\s+$/g, "").replace( /\n/g, " ").replace(/  +/g, " "))
         {
-            // extract features
-            r = [];
-            if ((node.nodeName == "#text") &&
-                node.data.replace( /^\s+/g, "").replace( /\s+$/g, "").replace( /\n/g, " ").replace(/  +/g, " "))
-            {
-                // node / parent properties (5x)
-                var pnn = node.parentNode.parentNode;
-                // distance from root node
-                r[r.length] = paren.length;
-                // number of neighbouring nodes
-                r[r.length] = pnn.childNodes.length;
-                // text length
-                r[r.length] = node.data.length / 100;
-                // node type (=html tag)
-                r[r.length] = (pnn.nodeType - 5) / 10;
-                // ratio text characters / html characters
-                r[r.length] = node.data.length / pnn.innerHTML.length;
-                
-                // generic document properties (8x)
-                d = doc.parentNode.parentNode;
-                // number of contained elements by type
-                r[r.length] = d.styleSheets.length != null ? d.styleSheets.length/5 : 0;
-                r[r.length] = d.links.length != null ? d.links.length/10 : 0;
-                r[r.length] = d.images.length != null ? d.images.length/10 : 0;
-                r[r.length] = d.forms.length != null ? d.forms.length : 0;
-                r[r.length] = d.embeds.length != null ? d.embeds.length : 0;
-                r[r.length] = d.anchors.length != null ? d.anchors.length/10 : 0;
-                // title length
-                r[r.length] = d.title.length != null ? d.title.length/50 : 0;
-                // total html source character count
-                r[r.length] = doc.innerHTML.length / 10000;
-    
+            // node / parent properties (5x)
+            var pnn = node.parentNode.parentNode;
+            // distance from root node
+            r[r.length] = paren.length;
+            // number of neighbouring nodes
+            r[r.length] = pnn.childNodes.length;
+            // text length
+            r[r.length] = node.data.length / 100;
+            // node type (=html tag)
+            r[r.length] = (pnn.nodeType - 5) / 10;
+            // ratio text characters / html characters
+            r[r.length] = node.data.length / pnn.innerHTML.length;
+            
+            // generic document properties (8x)
+            // number of contained elements by type
+            r[r.length] = styleSheetsl;
+            r[r.length] = linksl;
+            r[r.length] = imagesl;
+            r[r.length] = formsl;
+            r[r.length] = embedsl;
+            r[r.length] = anchorsl;
+            // title length
+            r[r.length] = titlel;
+            // total html source character count
+            r[r.length] = innerHTMLl;
 
-                // BTE like features
-                // number of non-WS delimited tokens (~= words) in the node's resulting text
-                r[r.length] = node.data.replace( /^\s+/g, "").replace( /\s+$/g, "").replace( /\n/g, " ").replace(/  +/g, " ").split(/\s/).length;
-                // distance - in nodes - to the /last/ text node
-                res += r.join(' ') + ' ' + internodes + "\n";
+            res += r.join(' ') + "\n";
+        } 
+        // recurse to children
+        var nparen = paren.slice();
+        if (node.nodeType)
+            nparen[nparen.length] = node.nodeType;
 
-                // reset the counter
-                internodes = 0;
-            } 
-            else if (node.nodeName != "#comment" && node.nodeName != "SCRIPT" && node.nodeName != "KW" && node.nodeName != undefined)
-            {
-                internodes++;
-            }
-            // recurse to children
-            var nparen = paren.slice();
-            if (node.nodeType)
-                nparen[nparen.length] = node.nodeType;
-            for (child in node.childNodes)
-            {
-                cnode = node.childNodes[child];
-                if (cnode.nodeName != "SCRIPT")
-                    rec(cnode, nparen);
-            }
-        };
-        rec(doc.QueryInterface(Components.interfaces.nsIDOMNSElement), []);
-    
-        return res;
-    }
+        for (child in node.childNodes)
+        {
+            cnode = node.childNodes[child];
+            if (cnode.nodeName != "SCRIPT")
+                rec(cnode, nparen);
+        }
+    };
+
+    // generic document properties (8x)
+    // get these values /here/, i.e. outside the recursion to avoid 
+    // repetitive recalculations
+    d = doc.parentNode.parentNode;
+    // number of contained elements by type
+    styleSheetsl = d.styleSheets.length != null ? d.styleSheets.length/5 : 0;
+    linksl = d.links.length != null ? d.links.length/10 : 0;
+    imagesl = d.images.length != null ? d.images.length/10 : 0;
+    formsl = d.forms.length != null ? d.forms.length : 0;
+    embedsl = d.embeds.length != null ? d.embeds.length : 0;
+    anchorsl = d.anchors.length != null ? d.anchors.length/10 : 0;
+    // title length
+    titlel = d.title.length != null ? d.title.length/50 : 0;
+    // total html source character count
+    innerHTMLl = doc.innerHTML.length / 10000;
+
+    rec(doc.QueryInterface(Components.interfaces.nsIDOMNSElement), []);
+
+    return res;
+}
 
 
 // vim: filetype=javascript
