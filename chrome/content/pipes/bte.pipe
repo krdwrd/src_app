@@ -1,0 +1,124 @@
+bte.prototype = new pipe();
+bte.prototype.Constructor = bte();
+
+function bte() 
+{
+}
+
+bte.extract = function(doc)
+{
+    var res = '';
+    var bt = [];
+    var bi = [];
+
+    // count the tags /between/ the relevant text nodes
+    internodes = 0;
+
+    function rec(node, paren)
+    {
+
+        // extract features
+        if ((node.nodeName == "#text") &&
+            node.data.replace( /^\s+/g, "").replace( /\s+$/g, "")
+            .replace( /\n/g, " ").replace(/  +/g, " "))
+        {
+
+            // BTE like features
+            // number of non-WS delimited tokens (~= words) in the node's
+            // resulting text
+            bt[bt.length] = node.data.replace( /^\s+/g, "")
+                .replace( /\s+$/g, "").replace( /\n/g, " ")
+                .replace(/  +/g, " ").split(/\s/).length;
+            // distance - in nodes - to the /previous/ text node
+            bi[bi.length] = internodes;
+
+            // reset the counter
+            internodes = 0;
+        } 
+        else if (node.nodeName != "#comment" && 
+                node.nodeName != "SCRIPT" && 
+                node.nodeName != "KW" && 
+                node.nodeName != undefined)
+        {
+            internodes++;
+        }
+        // recurse to children
+        var nparen = paren.slice();
+        if (node.nodeType)
+            nparen[nparen.length] = node.nodeType;
+        for (child in node.childNodes)
+        {
+            cnode = node.childNodes[child];
+            if (cnode.nodeName != "SCRIPT")
+                rec(cnode, nparen);
+        }
+
+    };
+    rec(doc.QueryInterface(Components.interfaces.nsIDOMNSElement), []);
+
+    // set the number of nodes from the ROOT to the first text node
+    bi[0] = 0;
+
+    bteres = bte(bt,bi);
+    min = bteres.min;
+    max = bteres.max;
+    verbose("min: "+ min +", max: "+max);
+    
+    for (i=0; i < bt.length; i++)
+    {
+        res += bt[i] + ' ' + bi[i] + ' ';
+        if (i < min | i > max)
+            res += "-1" + "\n";
+        else
+            res += "1" + "\n";
+    }
+
+
+    function bte(tokens, internodes)
+    {
+        // find breakpoints
+        var bps = [];
+
+        for (i=0; i < tokens.length; i++)
+        {
+            bps[bps.length] = tokens[i] - internodes[i];
+        }
+
+        // find breakpoints range which maximises the score
+        max_score = 0;
+        max_start = 0;
+        max_end   = 0;
+        for (i=0; i < bps.length; i++)
+        {
+            score = bps[i];
+            if (score > max_score)
+            {
+                max_score = score;
+                if (i > 0)
+                    max_start = i;
+                else     
+                    max_start = 0;
+                max_end = i;
+            }
+
+            for (j=i+1; j < bps.length; j++)
+            {
+                score+= bps[j];
+                if (score > max_score)
+                {
+                    max_score = score
+                    if (i > 0)
+                        max_start = i;
+                    else
+                        max_start = 0;
+                    max_end = j;
+                }
+            }
+        }
+        return { min: max_start, max: max_end };
+    }
+    return res;
+}
+
+
+// vim: filetype=javascript
