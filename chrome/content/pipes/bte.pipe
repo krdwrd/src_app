@@ -35,17 +35,20 @@ bte.extract = function(doc)
             // reset the counter
             internodes = 0;
         } 
-        else if (node.nodeName != "#comment" && 
-                node.nodeName != "SCRIPT" && 
-                node.nodeName != "KW" && 
-                node.nodeName != undefined)
-        {
-            internodes++;
-        }
+
         // recurse to children
         var nparen = paren.slice();
         if (node.nodeType)
             nparen[nparen.length] = node.nodeType;
+
+        if (node.nodeName &&
+            node.nodeName != "KW" && 
+            node.nodeName != "#text")
+        {
+            internodes++;
+            verbose("<" + node.nodeName + "> , "  + internodes);
+        }
+
         for (child in node.childNodes)
         {
             cnode = node.childNodes[child];
@@ -53,11 +56,16 @@ bte.extract = function(doc)
                 rec(cnode, nparen);
         }
 
+        if (node.nodeName &&
+            node.nodeName != "KW" && 
+            node.nodeName != "#text")
+        {
+            internodes++;
+            verbose("</" + node.nodeName + "> , "  + internodes);
+        }
+
     };
     rec(doc.QueryInterface(Components.interfaces.nsIDOMNSElement), []);
-
-    // set the number of nodes from the ROOT to the first text node
-    bi[0] = 0;
 
     bteres = bte(bt,bi);
     min = bteres.min;
