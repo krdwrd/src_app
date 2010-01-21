@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 if [[ -z "$1" || -z "$2" || -n "$3" ]]
 then
@@ -33,6 +33,11 @@ do
     B=`basename $i .png`
     test -f $SRC/$B.txt || continue
     W=`wc -w < $SRC/$B.txt`
+    
+    # for chinese:
+    # if [[ "$W" -gt 100 && "$W" -lt 1200 ]]
+    
+    # for en, de, it
     if [[ "$W" -gt 500 && "$W" -lt 6000 ]]
     then
         URL=`awk '/^URL:/ { print $2; }' < $SRC/$B.log` 
