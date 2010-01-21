@@ -1,6 +1,15 @@
 #!/bin/bash
 
 # takes: list of files of url lists (ending in .ggx)
+#
+# status output
+#  c:apitulated
+#  f:ailed
+#  k:illed
+#  l:ocked
+#  .:found in inital sweep - file existed then
+#  *:xists - recently added
+#  +:success
 
 export LANG=en_US.UTF-8
 RETRIES=3
@@ -41,7 +50,7 @@ do
     for num in \
         $(sort \
         <(seq -f "%05g" 1 $(( $(wc -l $g | cut -d ' ' -f1) )) ) \
-        <(ls -1 ${cat}.*.html 2>/dev/null | sed -e "s#${cat}\.##" -e 's#\.html##') | uniq -d | sed -e 's#^0\+##')
+        <(find . -name '*.html' 2>/dev/null | sed -e "s#\./${cat}\.##" -e 's#\.html##') | uniq -d | sed -e 's#^0\+##')
     do
         processed[${num}]=y
     done
@@ -52,13 +61,16 @@ do
     do
         let i++
 
+        # be verbose from time to time - print acutal file and count
+        if ! (( $i % 5000 ))
+        then 
+            echo -e "\n${cat}/${i}"
+        fi
+
         # look up current file in built list - and skip if already seen...
         [ -n "${processed[${i}]}" ] && echo -n "." && continue
 
         printf -v ind "%05d" $i
-        echo -e "\n***************"
-        echo "COR: $cat"
-        echo "IND: $ind"
         FN=$cat.$ind.html
         LOG=$cat.$ind.log
 
@@ -67,21 +79,27 @@ do
         # create lock while processing
         if [[ -f $FN ]]
         then
+            # echo -e "\n***************"
+            # echo "COR: $cat"
+            # echo "IND: $ind"
             echo "DATE: "$(date) >> $LOG
             echo "EXISTS" >> $LOG
-            echo "EXISTS"
+            # exists
+            echo -n "*"
             continue
         elif [[ -f $LOG && $(grep -cE "^FAILED$" ${LOG}) -ge ${RETRIES} ]]
         then 
-            echo "CAPITULATED"
+            # capitulated
+            echo -n "c"
             continue
         else
-            if mkdir ${FN}.lock
+            if mkdir ${FN}.lock > /dev/null 2>&1
             then
                 # rm -f $LOG 2> /dev/null
                 echo "DATE: "$(date) >> $LOG
             else
-                # echo "${FN} locked"
+                # locked
+                echo -n "l"
                 continue
             fi
         fi
@@ -91,14 +109,24 @@ do
 
         # download
         $(dirname $0)/grabf.sh "$url" $(pwd)/$cat.$ind 2>&1 >> $LOG
+        _RES=$?
 
         # remove lock
         rmdir ${FN}.lock
         
-        if [[ ! -f $FN ]]
+        if [[ ${_RES} != 0 || ! -f $FN ]]
         then
+            echo "NOT: $url" >> $LOG
             echo "FAILED" >> $LOG
-            echo "FAILED"
+
+            if [ ${_RES} != 0 ]
+            then 
+                # timeout -> killed
+                echo -n "k"
+            else
+                # failed 
+                echo -n "f"
+            fi
             continue
         fi
 
@@ -128,6 +156,9 @@ do
         awk '/<pre>/,/<\/pre>/ { gsub("$", "</pre><pre>"); } {print}' $FN.awk > $FN
         rm ${FN}.awk
         echo "DONE" >> $LOG
-        echo "DONE"
+        echo -n "+"
     done
+
+    echo
+
 done
