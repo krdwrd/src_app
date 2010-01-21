@@ -21,5 +21,5 @@ fi
 #KW_CMD="xulrunner-1.9.2 application.ini"
 RUNCMD="$KW_CMD -kwtags -text -grab -url "$URL" -out "$OUT" -follow"
 
-$RUNCMD > $FIFO &
+$RUNCMD 1>$FIFO 2>/dev/null &
 waitforapp

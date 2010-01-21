@@ -52,8 +52,6 @@ waitforapp() {
     line=""
 }
 
-# the app directory NEEDs a link to the lock file in the app's profile
-#KILLALL="kill $(readlink $(readlink $(dirname ${KW_CMD})/lock) | sed -e 's/.*+//')"
 KILLALL="pkill -f 'xulrunner-bin.*krdwrd'"
 
 FIFO=${APP}/krdwrd.fifo

@@ -11,7 +11,7 @@ fi
 if [[ ${KW_XVFB} == "true" ]]
 then
     if [[ ! $(pgrep -f "Xvfb :${KW_DISPLAY} -screen ${KW_SCREEN}") ]]; then
-        Xvfb :${KW_DISPLAY} -screen ${KW_SCREEN} 1024x768x24 > Xvfb.log 2>&1 & 
+        Xvfb :${KW_DISPLAY} -screen ${KW_SCREEN} 1024x768x24 > /dev/null 2>&1 & 
         echo $(basename $0): Started Xvfb, DISPLAY is :${KW_DISPLAY}.${KW_SCREEN} 
     fi
     DISPLAY=:${KW_DISPLAY}.${KW_SCREEN} ${XULRUNNER} $APP/application.ini $@
