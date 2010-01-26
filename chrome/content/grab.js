@@ -72,16 +72,20 @@ function grabScreen(win, doc)
     function maxh(elem, h)
     // determine document height by max'ing over all nodes
     {
-        if (elem.getBoundingClientRect)
+        // prevent js/iframe mess-up - make sure there is something to check
+        if (elem != undefined)
         {
-            cr = elem.getBoundingClientRect();
-            mh = (cr.top || 0) + (cr.height || elem.clientHeight);
-            h = Math.max(mh, h);
-        }
-        for (c in elem.childNodes)
-        {
-            ch = maxh(elem.childNodes[c], h);
-            h = Math.max(ch, h);
+            if (elem.getBoundingClientRect)
+            {
+                cr = elem.getBoundingClientRect();
+                mh = (cr.top || 0) + (cr.height || elem.clientHeight);
+                h = Math.max(mh, h);
+            }
+            for (c in elem.childNodes)
+            {
+                ch = maxh(elem.childNodes[c], h);
+                h = Math.max(ch, h);
+            }
         }
         return h;
     }
