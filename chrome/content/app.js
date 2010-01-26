@@ -50,15 +50,22 @@ var KrdWrdApp = {
       {
           if(typeof(pipes[propName]) != "undefined")
           {
-              verbose("processing: " + propName);
+              dump("PYP: " + propName + "...");
 
               var res = eval("pipes."+propName+".extract(doc.body)");
               saveText(res,KrdWrdApp.param.outbase + '.' + propName);
+              dump("done" + "\n");
           }
       }
 
-      var res = grabScreen(win, doc);
-      saveCanvas(res, KrdWrdApp.param.outbase + '.png');
+      if (KrdWrdApp.param.pic)
+      {
+          // save page as png
+          dump("PNG: ");
+          var res = grabScreen(win, doc);
+          dump((res != null) + "\n");
+          saveCanvas(res, KrdWrdApp.param.outbase + '.png');
+      }
 
       var res = extractTags(doc.body);
       saveText(res, KrdWrdApp.param.outbase + '.gold');
@@ -74,6 +81,7 @@ var KrdWrdApp = {
     {
       if (KrdWrdApp.param.kwtags)
           kwtext(doc, doc.body);
+
       // save html
       var source = grabSource(doc);
       print("HTML: " + (source != null));
@@ -87,12 +95,14 @@ var KrdWrdApp = {
           saveText(txt, KrdWrdApp.param.outbase + '.txt');
       }
 
-      // save page as png
-      var grab = grabScreen(win, doc);
-      print("PNG: " + (grab != null));
-      if (grab)
-          saveCanvas(grab, KrdWrdApp.param.outbase + '.png');
-
+      if (KrdWrdApp.param.pic)
+      {
+          // save page as png
+          var grab = grabScreen(win, doc);
+          print("PNG: " + (grab != null));
+          if (grab)
+              saveCanvas(grab, KrdWrdApp.param.outbase + '.png');
+      }
     }
     catch (e)
     {

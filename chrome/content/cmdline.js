@@ -21,6 +21,8 @@ Options:\n\
       Insert <kw> tags around all text blocks (grab only)\n\
     -text\n\
       Write text content to PREFIX.txt (grab only)\n\
+    -pic\n\
+      Do NOT write Screenshot to PREFIX.png\n\
     -sloppy\n\
       Ignore differences in text content during merge (merge only)\n\
     -stats\n\
@@ -34,15 +36,17 @@ Options:\n\
       Note: you SHOULD wait for the output of 'APP: READY'\n\
             before re-execution\n\
     -proxyenv\n\
-      Use the ENV proxy settings\n\
-\n\n\
+      Use the ENVironment proxy settings\n\
+    -js\n\
+      Activate JavaScript\n\
+   \n\n\
 *Note: Always use absolute paths when specifying file names.\n\
 ";
 
 // command line parameters
 KrdWrdApp.param = { outbase: null, grab: null, merge: null, kwtags: null,
            dump: null, url: 'http://krdwrd.org/', files: [],
-           text: false, sloppy: false, stats: false, verbose: false};
+           text: false, sloppy: false, stats: false, verbose: false };
 
 /*
  * from: https://developer.mozilla.org/en/XULRunner/CommandLine
@@ -61,6 +65,7 @@ CommandLineObserver.prototype = {
      var param = KrdWrdApp.param;
      param.grab = cmdLine.handleFlag("grab", false);
      param.text = cmdLine.handleFlag("text", false);
+     param.pic = cmdLine.handleFlag("pic", false);
      param.sloppy = cmdLine.handleFlag("sloppy", false);
      param.stats = cmdLine.handleFlag("stats", false);
      param.victor = cmdLine.handleFlag("victor", false);
@@ -73,6 +78,18 @@ CommandLineObserver.prototype = {
      param.follow = cmdLine.handleFlag("follow", false);
      // use the system proxy settings from ENV
      param.proxyenv = cmdLine.handleFlag("proxyenv", false)
+     param.jayscript = cmdLine.handleFlag("js", false)
+
+
+     if (param.jayscript)
+     {
+        var prefManager = Components.classes["@mozilla.org/preferences-service;1"]
+            .getService(Components.interfaces.nsIPrefBranch);
+        prefManager.setBoolPref("javascript.enabled", true);
+     }
+
+     param.pic = param.pic != null ? !param.pic : true ;
+
 
      if (! param.follow) 
      {
