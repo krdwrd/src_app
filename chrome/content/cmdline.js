@@ -46,7 +46,7 @@ Options:\n\
 // command line parameters
 KrdWrdApp.param = { outbase: null, grab: null, merge: null, kwtags: null,
            dump: null, url: 'http://krdwrd.org/', files: [],
-           text: false, sloppy: false, stats: false, verbose: false };
+           text: false, sloppy: false, stats: false, verbose: false, jayscript: false };
 
 /*
  * from: https://developer.mozilla.org/en/XULRunner/CommandLine

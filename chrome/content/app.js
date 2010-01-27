@@ -46,6 +46,9 @@ var KrdWrdApp = {
   {
       print("URL: " + doc.location);
 
+      if (KrdWrdApp.param.jayscript)  
+          filterNodes(doc.body, "NOSCRIPT");
+
       for(var propName in pipes)
       {
           if(typeof(pipes[propName]) != "undefined")
@@ -79,6 +82,9 @@ var KrdWrdApp = {
 
     try
     {
+      if (KrdWrdApp.param.jayscript)  
+          filterNodes(doc.body, "NOSCRIPT");
+
       if (KrdWrdApp.param.kwtags)
           kwtext(doc, doc.body);
 
