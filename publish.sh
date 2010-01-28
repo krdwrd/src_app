@@ -40,7 +40,7 @@ do
     # for en, de, it
     if [[ "$W" -gt 500 && "$W" -lt 6000 ]]
     then
-        URL=`awk '/^URL:/ { print $2; }' < $SRC/$B.log` 
+        URL=`awk '/^URL:/ { print $2; }' < $SRC/$B.log | tail -n 1` 
         echo -n "$B "
         echo "$URL `pwd`/$SRC/$B.html" >> $FILELIST
         let c++
