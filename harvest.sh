@@ -109,14 +109,14 @@ do
         _RES=$?
 
         # this gives us the URL as the app printed it
-        URL=$(awk '/URL:/ { print $2; }' $LOG | tail -n 1 | sed 's|^\(.*/\).*$|\1|')
+        APPURL=$(awk '/URL:/ { print $2; }' $LOG | tail -n 1 | sed 's|^\(.*/\).*$|\1|')
 
         # remove lock
         rmdir ${FN}.lock
         
         if [[ ${_RES} != 0 || ! -f $FN ]]
         then
-            echo "NOT: $url" >> $LOG
+            echo "NOT: '$url'" >> $LOG
             echo "FAILED" >> $LOG
 
             if [ ${_RES} != 0 ]
@@ -149,7 +149,7 @@ do
         sed -i '1 s/<?xml[^>]*?>/<?xml version="1.0" encoding="utf-8"?>/' $FN
 
         # fix base url, insert encoding info - hoping that '|' is not part of thr URL
-        sed -i "s|<head\([^>]\+\?\)>|<head\1><base href=\"${URL}\"/><meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">|i" $FN
+        sed -i "s|<head\([^>]\+\?\)>|<head\1><base href=\"${APPURL}\"/><meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">|i" $FN
         
         # split pre tags into single lines
         mv $FN $FN.awk
