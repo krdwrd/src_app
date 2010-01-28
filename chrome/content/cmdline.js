@@ -35,8 +35,8 @@ Options:\n\
       Stay around and wait for new execution\n\
       Note: you SHOULD wait for the output of 'APP: READY'\n\
             before re-execution\n\
-    -proxyenv\n\
-      Use the ENVironment proxy settings\n\
+    -proxy URL\n\
+      Use the URL as proxy (default proxy.krdwrd.org:8080)\n\
     -js\n\
       Activate JavaScript\n\
    \n\n\
@@ -77,15 +77,22 @@ CommandLineObserver.prototype = {
      // keep running, aka. tail -f 
      param.follow = cmdLine.handleFlag("follow", false);
      // use the system proxy settings from ENV
-     param.proxyenv = cmdLine.handleFlag("proxyenv", false)
+     param.proxy = cmdLine.handleFlagWithParam("proxy", false)
      param.jayscript = cmdLine.handleFlag("js", false)
 
 
+    var prefManager = Components.classes["@mozilla.org/preferences-service;1"]
+        .getService(Components.interfaces.nsIPrefBranch);
      if (param.jayscript)
      {
-        var prefManager = Components.classes["@mozilla.org/preferences-service;1"]
-            .getService(Components.interfaces.nsIPrefBranch);
         prefManager.setBoolPref("javascript.enabled", true);
+        print("OPT: JS activated");
+     }
+     else
+     {
+        prefManager.setBoolPref("javascript.enabled", false);
+        print("OPT: JS disabled");
+
      }
 
      param.pic = param.pic != null ? !param.pic : true ;
@@ -98,6 +105,11 @@ CommandLineObserver.prototype = {
                  error("timeout");
                  }, 60000);
      }
+     else
+     {
+        print("OPT: disabled timeout");
+     }
+
 
      // grabbing
      if (param.grab)

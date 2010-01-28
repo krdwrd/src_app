@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# takes: list of files of url lists (ending in .ggx)
+# usage: harvest.sh file1.ggx ... (list of files of url lists ending in .ggx)
 #
 # status output
 #  c:apitulated
@@ -13,6 +13,9 @@
 
 export LANG=en_US.UTF-8
 RETRIES=3
+USEFOLLOW="-f" # ""
+USEJS="" # "-j"
+USEPROXY="" # "-p host:port" or "-p \"\""
 
 function cleanup
 {
@@ -50,7 +53,7 @@ do
     for num in \
         $(sort \
         <(seq -f "%05g" 1 $(( $(wc -l $g | cut -d ' ' -f1) )) ) \
-        <(find . -name '*.html' 2>/dev/null | sed -e "s#\./${cat}\.##" -e 's#\.html##') | uniq -d | sed -e 's#^0\+##')
+        <(find . -name '*.html' -maxdepth 1 2>/dev/null | sed -e "s#\./${cat}\.##" -e 's#\.html##') | uniq -d | sed -e 's#^1\+##')
     do
         processed[${num}]=y
     done
@@ -79,9 +82,6 @@ do
         # create lock while processing
         if [[ -f $FN ]]
         then
-            # echo -e "\n***************"
-            # echo "COR: $cat"
-            # echo "IND: $ind"
             echo "DATE: "$(date) >> $LOG
             echo "EXISTS" >> $LOG
             # exists
@@ -95,7 +95,6 @@ do
         else
             if mkdir ${FN}.lock > /dev/null 2>&1
             then
-                # rm -f $LOG 2> /dev/null
                 echo "DATE: "$(date) >> $LOG
             else
                 # locked
@@ -105,7 +104,8 @@ do
         fi
         
         # download
-        $(dirname $0)/grabf.sh "$url" $(pwd)/$cat.$ind 2>&1 >> $LOG
+        # echo $(dirname $0)/grabf.sh $USEFOLLOW $USEJS $USEPROXY "$url" $(pwd)/$cat.$ind
+        $(dirname $0)/grabf.sh $USEFOLLOW $USEJS $USEPROXY "$url" $(pwd)/$cat.$ind 1>&1 >> $LOG
         _RES=$?
 
         # this gives us the URL as the app printed it

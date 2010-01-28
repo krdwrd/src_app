@@ -8,18 +8,47 @@ else
     . ${CONFIG}
 fi
 
+function usage
+{
+    echo -e "Usage: $(basename $0)" \
+        "[-f] [-j] [-p ARG] http://url /absolute/output/path\n\
+        -f: use the app's follow feature\n\
+        -j: activate JavaScript\n\
+        -p ARG: usr ARG as http(s) proxy"
+    exit 1
+}
+
+unset USEFOLLOW USEJS USEPROXY
+while getopts ":fjp:" opt
+do
+    case $opt in
+        f ) USEFOLLOW="-follow"
+            ;;
+        j ) USEJS="-js"
+            ;;
+        p ) USEPROXY="-proxy \"$OPTARG\""
+            ;;
+        /?) usage
+            ;;
+    esac
+done
+shift $(($OPTIND - 1))
+
 URL=$1
 OUT=$2
 DIR=$(dirname $0)
 
 if [[ -z "$URL" || -z "$OUT" ]];
 then
-    echo "Usage: $(basename $0) http://url /absolute/output/path"
-    exit 1
+    usage
 fi
 
-#KW_CMD="xulrunner-1.9.2 application.ini"
-RUNCMD="$KW_CMD -kwtags -text -grab -url "$URL" -out "$OUT" -follow"
+RUNCMD="$KW_CMD -kwtags -text -grab -url "$URL" -out "$OUT" $USEFOLLOW $USEJS $USEPROXY"
 
-$RUNCMD 1>$FIFO 2>/dev/null &
-waitforapp
+if [ -n "$USEFOLLOW" ]
+then
+    $RUNCMD 1>$FIFO 2>/dev/null &
+    waitforapp
+else
+    $RUNCMD
+fi

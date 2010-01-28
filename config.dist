@@ -9,19 +9,7 @@ KW_XVFB=true # false
 XULRUNNER=~/krdwrd/trunk/external/XULRunner/xulrunner
 APP=~/krdwrd/trunk/src/app
 
-# notes on the proxy setting:
-# A)
-# '-proxyenv' will trigger use of your system-settings, i.e.
-# usually, something like http_proxy ENV vars.
-# you may just set them here, as well.
-# B)
-# this settings is only used in /some/ contexts!
-
-# export http_proxy=""
-# export https_proxy=${http_proxy}
-USEPROXY="-proxyenv" # ""
-
-KW_CMD="${APP}/krdwrd ${USEPROXY}"
+KW_CMD="${APP}/krdwrd"
 KW_TMOUT=15
 
 #
