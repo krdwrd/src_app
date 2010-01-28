@@ -16,6 +16,7 @@ RETRIES=3
 USEFOLLOW="-f" # ""
 USEJS="" # "-j"
 USEPROXY="" # "-p host:port" or "-p \"\""
+NOPIC="" # "-s"
 
 function cleanup
 {
@@ -105,7 +106,7 @@ do
         
         # download
         # echo $(dirname $0)/grabf.sh $USEFOLLOW $USEJS $USEPROXY "$url" $(pwd)/$cat.$ind
-        $(dirname $0)/grabf.sh $USEFOLLOW $USEJS $USEPROXY "$url" $(pwd)/$cat.$ind 1>&1 >> $LOG
+        $(dirname $0)/grabf.sh $USEFOLLOW $USEJS $USEPROXY $NOPIC "$url" $(pwd)/$cat.$ind 1>&1 >> $LOG
         _RES=$?
 
         # this gives us the URL as the app printed it

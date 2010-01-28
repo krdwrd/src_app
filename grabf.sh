@@ -14,12 +14,13 @@ function usage
         "[-f] [-j] [-p ARG] http://url /absolute/output/path\n\
         -f: use the app's follow feature\n\
         -j: activate JavaScript\n\
-        -p ARG: usr ARG as http(s) proxy"
+        -p ARG: usr ARG as http(s) proxy\n\
+        -s: DISABLE screenshot"
     exit 1
 }
 
 unset USEFOLLOW USEJS USEPROXY
-while getopts ":fjp:" opt
+while getopts ":fjp:s" opt
 do
     case $opt in
         f ) USEFOLLOW="-follow"
@@ -27,6 +28,8 @@ do
         j ) USEJS="-js"
             ;;
         p ) USEPROXY="-proxy \"$OPTARG\""
+            ;;
+        s ) NOPIC="-pic"
             ;;
         /?) usage
             ;;
@@ -43,7 +46,7 @@ then
     usage
 fi
 
-RUNCMD="$KW_CMD -kwtags -text -grab -url "$URL" -out "$OUT" $USEFOLLOW $USEJS $USEPROXY"
+RUNCMD="$KW_CMD -kwtags -text -grab -url "$URL" -out "$OUT" $USEFOLLOW $USEJS $USEPROXY $NOPIC"
 
 if [ -n "$USEFOLLOW" ]
 then
