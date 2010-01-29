@@ -24,18 +24,20 @@ KW_TMOUT=15
 
 waitforapp() {
     until [[ ${line} == "APP: READY" ]]
-    do 
-        read -t ${KW_TMOUT} line < ${FIFO}; 
+    do
+        read -t ${KW_TMOUT} line < ${FIFO}
 
-        if [[ $? != 0 ]]; then 
-            eval ${KILLALL} && sleep 1;
-            break; 
-        elif [[ ${line:0:8} == "RES: ERR" ]]; then
-            echo ${line};
-            break;
+        if [[ $? != 0 ]]
+        then
+            eval ${KILLALL} && sleep 1
+            return 1
+        elif [[ ${line:0:8} == "RES: ERR" ]]
+        then
+            echo ${line}
+            return 1
         fi
 
-        echo ${line};
+        echo ${line}
     done
     line=""
 }

@@ -1,29 +1,45 @@
 #!/bin/bash
 
-# usage: harvest.sh file1.ggx ... (list of files of url lists ending in .ggx)
-#
-# status output
-#  c:apitulated
-#  f:ailed
-#  k:illed
-#  l:ocked
-#  .:found in inital sweep - file existed then
-#  *:xists - recently added
-#  +:success
-
 export LANG=en_US.UTF-8
 RETRIES=3
 USEFOLLOW="-f" # ""
 USEJS="" # "-j"
 USEPROXY="" # "-p host:port" or "-p \"\""
 NOPIC="" # "-s"
+USEGRID="" # "-g"
+
+function usage
+{
+    echo -e "Usage: $(basename $0)" \
+        "file1.ggx ..." \
+        "(list of files of url lists ending in .ggx) \n\
+        \n\
+    status output:
+         c:apitulated
+         f:ailed
+         k:illed
+         l:ocked
+         .:found in inital sweep - file existed then
+         *:xists - recently added
+         +:success"
+    exit 1
+}
+
+while getopts ":h" opt
+do
+    case $opt in
+        h|\?) usage
+            ;;
+    esac
+done
+shift $(($OPTIND - 1))
 
 function cleanup
 {
     if [ -n ${FN} ]
     then
         echo cleaning up...
-        if [ -e ${LOG} ]; then rm -v ${LOG}; fi
+        # if [ -e ${LOG} ]; then rm -v ${LOG}; fi
         if [ -e ${FN} ]; then rm -v ${FN}; fi
         if [ -e ${FN}.awk ]; then rm -v ${FN}.awk; fi
         if [ -e ${FN}.lock ]; then rmdir -v ${FN}.lock; fi
@@ -54,7 +70,7 @@ do
     for num in \
         $(sort \
         <(seq -f "%05g" 1 $(( $(wc -l $g | cut -d ' ' -f1) )) ) \
-        <(find . -name '*.html' -maxdepth 1 2>/dev/null | sed -e "s#\./${cat}\.##" -e 's#\.html##') | uniq -d | sed -e 's#^1\+##')
+        <(find . -maxdepth 1 -name '*.html' 2>/dev/null | sed -e "s#\./${cat}\.##" -e 's#\.html##') | uniq -d | sed -e 's#^0\+##')
     do
         processed[${num}]=y
     done
@@ -105,8 +121,8 @@ do
         fi
         
         # download
-        # echo $(dirname $0)/grabf.sh $USEFOLLOW $USEJS $USEPROXY "$url" $(pwd)/$cat.$ind
-        $(dirname $0)/grabf.sh $USEFOLLOW $USEJS $USEPROXY $NOPIC "$url" $(pwd)/$cat.$ind 1>&1 >> $LOG
+        # echo $(dirname $0)/grabf.sh $USEGRID $USEFOLLOW $USEJS $USEPROXY $NOPIC "$url" $(pwd)/$cat.$ind
+        $(dirname $0)/grabf.sh $USEGRID $USEFOLLOW $USEJS $USEPROXY $NOPIC "$url" $(pwd)/$cat.$ind 1>&1 >> $LOG
         _RES=$?
 
         # this gives us the URL as the app printed it
@@ -120,7 +136,7 @@ do
             echo "NOT: '$url'" >> $LOG
             echo "FAILED" >> $LOG
 
-            if [ ${_RES} != 0 ]
+            if [ ${_RES} = 1 ]
             then 
                 # timeout -> killed
                 echo -n "k"
