@@ -4,9 +4,9 @@ export LANG=en_US.UTF-8
 RETRIES=3
 USEFOLLOW="-f" # ""
 USEJS="" # "-j"
-USEPROXY="" # "-p host:port" or "-p \"\""
-NOPIC="" # "-s"
-USEGRID="" # "-g"
+USEPROXY="-p proxy.krdwrd.org:8081" # "-p host:port" or "-p \"\""
+NOPIC="-s" # "-s"
+USEGRID="-g" # "-g"
 
 function usage
 {
