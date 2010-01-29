@@ -70,7 +70,7 @@ then
         mkfifo $FIFO
     fi
 
-    DISPLAY=:${GR_DISPLAY}.${KW_SCREEN} ${XULRUNNER} $APP/application-${GRID}.ini -kwtags -text -grab -url "$URL" -out "$OUT" $USEFOLLOW $USEJS $USEPROXY $NOPIC 1> $FIFO  2>/dev/null &
+    DISPLAY=:${GR_DISPLAY}.${KW_SCREEN} ${XULRUNNER} $APP/application-${GRID}.ini -kwtags -text -grab -url "$URL" -out "$OUT" $USEFOLLOW $USEJS $USEPROXY $NOPIC 1>$FIFO 2>/dev/null &
     KW_TMOUT=10
     waitforapp 2>&1 
 elif [ -n "$USEFOLLOW" ]
