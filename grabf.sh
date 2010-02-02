@@ -11,11 +11,14 @@ fi
 function usage
 {
     echo -e "Usage: $(basename $0)" \
-        "[-f] [-j] [-p ARG] http://url /absolute/output/path\n\
+        "[-f] [-g] [-j] [-p ARG] [-s] http://url /absolute/output/path\n\
+Wrapper for $(dirname $0)/krdwrd: grab mode.\n\
+(Implements logic to have multiple Apps run in parallel.)\n\
+\n\
         -f: use the app's follow feature\n\
         -g: use grid logic\n\
         -j: activate JavaScript\n\
-        -p ARG: usr ARG as http(s) proxy\n\
+        -p ARG: use ARG as http(s) proxy\n\
         -s: DISABLE screenshot"
     exit 1
 }
