@@ -107,7 +107,7 @@ CommandLineObserver.prototype = {
      }
      else
      {
-        print("OPT: disabled timeout");
+        print("OPT: timeout disabled, follow mode");
      }
 
 
