@@ -13,7 +13,9 @@ function usage
     echo -e "Usage: $(basename $0)" \
         "file1.ggx ..." \
         "(list of files of url lists ending in .ggx) \n\
-        \n\
+Wrapper for $(dirname $0)/grabf.sh: Grab URLs listed in files.\n\
+(See the beginning of the file for some parameters you might want to change.)
+\n\
     status output:
          c:apitulated
          f:ailed
