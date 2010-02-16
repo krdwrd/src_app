@@ -3,6 +3,18 @@ bte.prototype.Constructor = bte();
 
 function bte() 
 {
+    // 
+    // Finn's BTE (Body Text Extraction) algorithm for extracting the main body
+    // text of a web page and avoiding the surrounding // irrelevant
+    // information. The description of the algorithm can be found in
+    //
+    // A. Finn, N. Kushmerick, and B. Smyth. Fact or Fiction:
+    // Content classification for digital libraries. In DELOS Workshop:
+    // Personalisation and Recommender System in Digital Libraries, 2001.
+    // 
+    // Adapted from Jan Pomikálek's version 
+    // [http://nlp.fi.muni.cz/~xpomikal/scripts/bte.py]
+    //
 }
 
 bte.extract = function(doc)
@@ -36,18 +48,20 @@ bte.extract = function(doc)
             internodes = 0;
         } 
 
-        // recurse to children
-        var nparen = paren.slice();
-        if (node.nodeType)
-            nparen[nparen.length] = node.nodeType;
 
-        if (node.nodeName &&
+        // (node.nodeName != "#comment" && node.nodeName != "SCRIPT")
+        if (node.nodeName != undefined &&
             node.nodeName != "KW" && 
             node.nodeName != "#text")
         {
             internodes++;
             verbose("<" + node.nodeName + "> , "  + internodes);
         }
+
+        // recurse to children
+        var nparen = paren.slice();
+        if (node.nodeType)
+            nparen[nparen.length] = node.nodeType;
 
         for (child in node.childNodes)
         {
@@ -56,14 +70,13 @@ bte.extract = function(doc)
                 rec(cnode, nparen);
         }
 
-        if (node.nodeName &&
+        if (node.nodeName != undefined &&
             node.nodeName != "KW" && 
             node.nodeName != "#text")
         {
             internodes++;
             verbose("</" + node.nodeName + "> , "  + internodes);
         }
-
     };
     rec(doc.QueryInterface(Components.interfaces.nsIDOMNSElement), []);
 
