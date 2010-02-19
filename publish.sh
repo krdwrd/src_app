@@ -45,7 +45,7 @@ do
         echo "$URL `pwd`/$SRC/$B.html" >> $FILELIST
         let c++
     else
-        echo -n "! "
+        echo -n "!:$W "
     fi
 done
 
