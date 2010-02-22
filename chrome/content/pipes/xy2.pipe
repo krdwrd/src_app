@@ -1,0 +1,107 @@
+xy2.prototype = new pipe();
+xy2.prototype.Constructor = xy2();
+
+function xy2()
+{
+}
+
+xy2.extract = function(doc)
+{
+    var res = '';
+
+    var dcr = doc.getBoundingClientRect();
+    var docwidth = parseInt(dcr.width || doc.width);
+
+    function maxh(elem, h)
+    // determine document height by max'ing over all nodes
+    {
+        if (elem.getBoundingClientRect)
+        {
+            cr = elem.getBoundingClientRect();
+            mh = (cr.top || 0) + (cr.height || elem.clientHeight);
+            h = Math.max(mh, h);
+        }
+        for (c in elem.childNodes)
+        {
+            ch = maxh(elem.childNodes[c], h);
+            h = Math.max(ch, h);
+        }
+
+        return h;
+    }
+    var docheight = Math.round(maxh(doc, dcr.height));
+
+    function rec(node)
+    {
+        // extract coordinates
+        if ((node.nodeName == "#text") &&
+            node.data.replace( /^\s+/g, "").replace( /\s+$/g, "").replace( /\n/g, " ").replace(/  +/g, " "))
+        {
+            // enumerate client rects
+            r = [];
+            r[r.length] = docwidth;  // 1
+            r[r.length] = docheight; // 2
+
+            var pn = node.parentNode;
+            var brect = pn.getBoundingClientRect();
+            
+            var bleft = Math.max( parseInt(brect.left), -1 );
+            var btop = Math.max( parseInt(brect.top), -1 );
+            var bwidth = parseInt(brect.width);
+            var bheight = parseInt(brect.height);
+
+            r[r.length] = bleft;   // 3
+            r[r.length] = btop;    // 4
+            r[r.length] = bwidth;  // 5
+            r[r.length] = bheight; // 6
+            r[r.length] = bwidth  * bheight; // 7
+
+            r[r.length] = Math.max( Math.min( bleft / docwidth, 1 ), 0.01);  // 8
+            r[r.length] = Math.max( Math.min( btop / docheight, 1 ), 0.001);  // 9
+            r[r.length] = Math.max( Math.min( bwidth / docwidth, 1 ), 0.001); // 10
+            r[r.length] = Math.max( Math.min( bheight / docheight, 1 ), 0.001); // 11
+            r[r.length] = Math.max( Math.min( 
+                ( bwidth  * bheight  ) / ( docwidth * docheight )
+                , 1), 00001); // 12
+
+            function addrects(res)
+            {
+                ls = 0;
+                foa = 0;
+                for (p in res)
+                {
+                    re = res[p];
+                    if (re && (re.left > -1))
+                    {
+                        ls += re.height;
+                        foa += re.width * re.height;
+                    }
+                }
+                // inner-element - spread over multiple lines - line spacing
+                r[r.length] = bheight > 0 ? ls / bheight : -1; // 13
+                // fraction of A(single lines) within outer box
+                r[r.length] = foa / ((bwidth * bheight) < 1 ? 
+                    1 : (bwidth * bheight)); // 14
+            }
+
+            var rects = pn.getClientRects();
+            r[r.length] = rects ? rects.length / 4 : -1; // 15
+            addrects(rects);
+
+            res += r.join(' ') + "\n";
+        }
+        // recurse to children
+        for (child in node.childNodes)
+        {
+            cnode = node.childNodes[child];
+            if (cnode.nodeName != "SCRIPT")
+                rec(cnode);
+        }
+    };
+    rec(doc)
+
+    return res;
+}
+
+
+// vim: filetype=javascript
