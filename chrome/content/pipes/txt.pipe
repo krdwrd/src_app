@@ -1,11 +1,16 @@
-txt.prototype = new pipe();
-txt.prototype.Constructor = txt();
+txt2.prototype = new pipe();
+txt2.prototype.Constructor = txt2();
 
-function txt() 
+function txt2() 
 {
+    // 
+    // text paragraphs output. 'collect' text nodes' content until paragraph
+    // ends (checked by wsNode()) and output the result as many times as
+    // nodes were collected.
+    //
 }
 
-txt.extract = function(doc)
+txt2.extract = function(doc)
 {
     traverse(doc, function(node, kw) 
         {
@@ -13,51 +18,45 @@ txt.extract = function(doc)
         }, "krdwrd-tag-1"
     );
 
-    // returns a string of '\n'-s that should be put at /this/ position in txt output:
-    // usually, one but for Headings an extra one could be nice.
-    wsNode = function (node)
-    {
-        var retVal = ""; 
-        var nn = node.nodeName + "";
-
-        if (nn == "P" || 
-                nn == "DIV" || 
-                nn == "BR" || 
-                nn == "BLOCKQUOTE" || 
-                nn == "DL" || 
-                nn == "UL" || 
-                nn == "OL" || 
-                nn == "LI" || 
-                nn == "TR" || 
-                nn == "TH" || 
-                nn == "TD" || 
-                nn == "TABLE" || 
-                nn == "OPTION" || 
-                nn == "PRE") retVal = "\n";
-        else if (nn == "H1" || 
-                nn == "H2" || 
-                nn == "H3" || 
-                nn == "H4" || 
-                nn == "H5" || 
-                nn == "H6") retVal = "\n\n";
-
-        return retVal;
-    };
-
     var res = "";
     var txt = [];
-    var lnind = 0;
 
-    function myTraverse(body)
+    function txTraverse(body)
     {
         var txind = 0;
         var line = "";
-        var lastSibling = 0;
+
+        // returns true for 'interrupting' nodes 
+        wsNode = function (node)
+        {
+            var nn = node.nodeName + "";
+
+            return (nn == "P" ||
+                nn == "DIV" ||
+                nn == "BR" ||
+                nn == "BLOCKQUOTE" ||
+                nn == "DL" ||
+                nn == "UL" ||
+                nn == "OL" ||
+                nn == "LI" ||
+                nn == "TR" ||
+                nn == "TH" ||
+                nn == "TD" ||
+                nn == "TABLE" ||
+                nn == "OPTION" ||
+                nn == "PRE" ||
+                nn == "H1" ||
+                nn == "H2" ||
+                nn == "H3" ||
+                nn == "H4" ||
+                nn == "H5" ||
+                nn == "H6");
+        };
 
         function prtLines()
         {
             for (i=0; i < txind; i++) txt[txt.length] = 
-                // append the lines - as often as nodes has been passed by - and make
+                // append the lines - as often as nodes have been passed by - and make
                 // sure that there are no WS at the beginning, the end or more than 
                 // one successive one within a line.
                 line.replace( /^\s+/, "").replace( /\s+$/, "").replace( /\s+/g, " ");
@@ -67,34 +66,13 @@ txt.extract = function(doc)
 
         function rec(node)
         {
-            // either /this/ node is BR-like or
-            // during the last run the last sibling of a WS node had been visited.
-            if (wsNode(node) != "" || lastSibling == 1)
-            {
-                prtLines();
-            }
-            lastSibling = 0;
-
             if (node.nodeName == "#text")
             {
                 // is this a text node that is recognized by /the other/ pipelines?
-                var tx = node.data.replace( /^\s+/g, "").replace( /\s+$/g, "").replace( /\n/g, " ").replace(/  +/g, " ");
-                if (tx)
+                if (node.data.replace( /^\s+/g, "").replace( /\s+$/g, "")
+                    .replace( /\n/g, " ").replace(/  +/g, " "))
                 {
                     txind++;
-
-                    // makes sure to introduce a WS, e.g. for <H1>foo</H1>bar
-                    // ----
-                    // foo
-                    // bar
-                    // ----
-                    // we assume that the text node is surrounded by <kw> tags...
-                    // ...and may still not get all cases!
-                    // TODO: make sure to cover /all/ cases - or at least explicitly don't cover others!
-                    np = node.parentNode;
-                    npp = node.parentNode.parentNode;
-                    if (npp != null && wsNode(npp) != "" && np.nextElementSibling == null)
-                        lastSibling = 1;
                 }
 
                 // keep the formatting close to the rendered output, e.g.
@@ -108,18 +86,29 @@ txt.extract = function(doc)
                 if (formttx) line += formttx;
             } 
             
+            if (txind > 0 && wsNode(node))
+            {
+                verbose("<" + node.nodeName + ">, " + txind);
+                prtLines();
+            }
+
             for (child in node.childNodes)
             {
                 cnode = node.childNodes[child];
                 if (cnode.nodeName != "SCRIPT")
                     rec(cnode);
             }
+
+            if (wsNode(node))
+            {
+                verbose("</" + node.nodeName + ">, " + txind);
+                prtLines();
+            }
         };
         rec(body);
-        // the last line would still be in 'line' and would not have been printed, yet. do this now: 
-        prtLines();
+        if (txind > 0) prtLines();
     }
-    myTraverse(doc);
+    txTraverse(doc);
 
     for (t in txt) res += txt[t] + "\n";
     return res;
