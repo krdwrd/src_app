@@ -25,9 +25,9 @@ dom.extract = function(doc)
             // number of neighbouring nodes
             r[r.length] = pnn.childNodes.length;
             // text length
-            r[r.length] = node.data.length / 100;
+            r[r.length] = node.data.length;
             // node type (=html tag)
-            r[r.length] = (pnn.nodeType - 5) / 10;
+            r[r.length] = (pnn.nodeType - 5);
             // ratio text characters / html characters
             r[r.length] = node.data.length / pnn.innerHTML.length;
             
@@ -64,16 +64,16 @@ dom.extract = function(doc)
     // repetitive recalculations
     d = doc.parentNode.parentNode;
     // number of contained elements by type
-    styleSheetsl = d.styleSheets.length != null ? d.styleSheets.length/5 : 0;
-    linksl = d.links.length != null ? d.links.length/10 : 0;
-    imagesl = d.images.length != null ? d.images.length/10 : 0;
+    styleSheetsl = d.styleSheets.length != null ? d.styleSheets.length : 0;
+    linksl = d.links.length != null ? d.links.length : 0;
+    imagesl = d.images.length != null ? d.images.length : 0;
     formsl = d.forms.length != null ? d.forms.length : 0;
     embedsl = d.embeds.length != null ? d.embeds.length : 0;
-    anchorsl = d.anchors.length != null ? d.anchors.length/10 : 0;
+    anchorsl = d.anchors.length != null ? d.anchors.length : 0;
     // title length
-    titlel = d.title.length != null ? d.title.length/50 : 0;
+    titlel = d.title.length != null ? d.title.length : 0;
     // total html source character count
-    innerHTMLl = doc.innerHTML.length / 10000;
+    innerHTMLl = doc.innerHTML.length;
 
     rec(doc.QueryInterface(Components.interfaces.nsIDOMNSElement), []);
 
