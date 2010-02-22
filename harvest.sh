@@ -13,7 +13,7 @@ function usage
     echo -e "Usage: $(basename $0)" \
         "file1.ggx ..." \
         "(list of files of url lists ending in .ggx) \n\
-Wrapper for $(dirname $0)/grabf.sh: Grab URLs listed in files.\n\
+Wrapper for $(dirname $0)/grab.sh: Grab URLs listed in files.\n\
 (See the beginning of the file for some parameters you might want to change.)
 \n\
     status output:
@@ -123,8 +123,8 @@ do
         fi
         
         # download
-        # echo $(dirname $0)/grabf.sh $USEGRID $USEFOLLOW $USEJS $USEPROXY $NOPIC "$url" $(pwd)/$cat.$ind
-        $(dirname $0)/grabf.sh $USEGRID $USEFOLLOW $USEJS $USEPROXY $NOPIC "$url" $(pwd)/$cat.$ind 1>&1 >> $LOG
+        # echo $(dirname $0)/grab.sh $USEGRID $USEFOLLOW $USEJS $USEPROXY $NOPIC "$url" $(pwd)/$cat.$ind
+        $(dirname $0)/grab.sh $USEGRID $USEFOLLOW $USEJS $USEPROXY $NOPIC "$url" $(pwd)/$cat.$ind 1>&1 >> $LOG
         _RES=$?
 
         # this gives us the URL as the app printed it

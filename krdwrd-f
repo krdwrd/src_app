@@ -1,0 +1,51 @@
+#!/bin/bash
+
+CONFIG=$(dirname $0)/config.app
+if [ ! -f ${CONFIG} ]; then
+    echo $(basename $0): Adapt FILE:config.dist and save it as $(basename ${CONFIG}) 
+    exit 1
+else
+    . ${CONFIG}
+fi
+
+###
+# tiny things for convenience
+#
+
+waitforapp() {
+    until [[ ${line} == "APP: READY" ]]
+    do
+        read -t ${KW_TMOUT} line < ${FIFO}
+
+        if [[ $? != 0 ]]
+        then
+            eval ${KILLALL} && sleep 1
+            return 1
+        elif [[ ${line:0:8} == "RES: ERR" ]]
+        then
+            echo ${line}
+            return 1
+        fi
+
+        echo ${line}
+    done
+    line=""
+}
+
+chkfifo() {
+    if [[ ! -p $FIFO ]]; then
+        echo "$(basename $0): created FIFO ${FIFO}"
+        mkfifo $FIFO
+    fi
+}
+#
+#
+###
+
+FIFO=${APP}/krdwrd.fifo
+chkfifo
+
+$(dirname $0)/krdwrd -follow $@ 1>$FIFO 2>&2 &
+
+KILLALL="pkill -f 'xulrunner-bin.*krdwrd'"
+waitforapp
