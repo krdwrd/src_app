@@ -56,26 +56,7 @@ CARGS="-kwtags -text -grab -url "$URL" -out "$OUT" $USEFOLLOW $USEJS $USEPROXY $
 
 if [ -n "$USEGRID" ]
 then
-    [ -z ${GRID} ] && (echo "$(basename $0): missing value for GRID"; exit 10)
-    [ -z ${GR_DISPLAY} ] && (echo "$(basename $0): missing value for GR_DISPLAY"; exit 10)
-
-    if [[ ! -e $APP/application-${GRID}.ini ]]
-    then
-        echo "$(basename $0): creating file $APP/application-${GRID}.ini"
-        sed -e "s#^ID\(.*\)#ID\1\nProfile=krdwrd.org.${GRID}#" ${APP}/application.ini > ${APP}/application-${GRID}.ini
-    fi
-    
-    KILLALL="pkill -f 'xulrunner-bin.*krdwrd.*-${GRID}'"
-    
-    FIFO=${APP}/krdwrd-${GRID}.fifo
-    if [[ ! -p $FIFO ]]; then
-        echo "$(basename $0): created FIFO ${FIFO}"
-        mkfifo $FIFO
-    fi
-
-    DISPLAY=:${GR_DISPLAY}.${KW_SCREEN} ${XULRUNNER} $APP/application-${GRID}.ini -kwtags -text -grab -url "$URL" -out "$OUT" $USEFOLLOW $USEJS $USEPROXY $NOPIC 1>$FIFO 2>/dev/null &
-    KW_TMOUT=10
-    waitforapp 2>&1 
+    $APP/krdwrd-g $CARGS 2>/dev/null
 elif [ -n "$USEFOLLOW" ]
 then
     $APP/krdwrd-f $CARGS
