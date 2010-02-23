@@ -66,13 +66,16 @@ do
 
     i=0
     cat=$(basename $g .ggx)
+
+    # create directory for the output files
+    [ -d ${cat} ] || mkdir ${cat}
     
     # build a list of already processed files for later look-up
     processed=
     for num in \
         $(sort \
         <(seq -f "%05g" 1 $(( $(wc -l $g | cut -d ' ' -f1) )) ) \
-        <(find . -maxdepth 1 -name '*.html' 2>/dev/null | sed -e "s#\./${cat}\.##" -e 's#\.html##') | uniq -d | sed -e 's#^0\+##')
+        <(find ./${cat}/ -maxdepth 1 -name '*.html' -printf '%f\n' 2>/dev/null | sed -e 's#\.html##') | uniq -d | sed -e 's#^0\+##')
     do
         processed[${num}]=y
     done
@@ -93,8 +96,8 @@ do
         [ -n "${processed[${i}]}" ] && echo -n "." && continue
 
         printf -v ind "%05d" $i
-        FN=$cat.$ind.html
-        LOG=$cat.$ind.log
+        FN=${cat}/${ind}.html
+        LOG=${cat}/${ind}.log
 
         # skip if file exists
         # skip if too many tries
@@ -177,7 +180,5 @@ do
         echo "DONE" >> $LOG
         echo -n "+"
     done
-
     echo
-
 done
