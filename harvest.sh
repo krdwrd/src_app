@@ -1,12 +1,12 @@
 #!/bin/bash
 
 export LANG=en_US.UTF-8
-RETRIES=3
+RETRIES=4
 USEFOLLOW="-f" # ""
 USEJS="" # "-j"
-USEPROXY="" # "-p host:port" or "-p \"\""
-NOPIC="" # "-s"
-USEGRID="" # "-g"
+USEPROXY="-p proxy.krdwrd.org:8081" # "-p host:port" or "-p \"\""
+NOPIC="-s" # "-s"
+USEGRID="-g" # "-g"
 
 function usage
 {
@@ -127,7 +127,7 @@ do
         
         # download
         # echo $(dirname $0)/grab.sh $USEGRID $USEFOLLOW $USEJS $USEPROXY $NOPIC "$url" $(pwd)/$cat.$ind
-        $(dirname $0)/grab.sh $USEGRID $USEFOLLOW $USEJS $USEPROXY $NOPIC "$url" $(pwd)/$cat.$ind 1>&1 >> $LOG
+        $(dirname $0)/grab.sh $USEGRID $USEFOLLOW $USEJS $USEPROXY $NOPIC "$url" $(pwd)/$cat/$ind 1>&1 >> $LOG
         _RES=$?
 
         # this gives us the URL as the app printed it
