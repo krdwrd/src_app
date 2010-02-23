@@ -1,7 +1,7 @@
-txt2.prototype = new pipe();
-txt2.prototype.Constructor = txt2();
+txt.prototype = new pipe();
+txt.prototype.Constructor = txt();
 
-function txt2() 
+function txt() 
 {
     // 
     // text paragraphs output. 'collect' text nodes' content until paragraph
@@ -10,7 +10,7 @@ function txt2()
     //
 }
 
-txt2.extract = function(doc)
+txt.extract = function(doc)
 {
     traverse(doc, function(node, kw) 
         {
