@@ -9,43 +9,5 @@ KW_XVFB=true # false
 XULRUNNER=~/krdwrd/trunk/external/XULRunner/xulrunner
 APP=~/krdwrd/trunk/src/app
 
-KW_CMD="${APP}/krdwrd"
+# timeout for follow mode - in seconds
 KW_TMOUT=15
-
-#
-# end of config -- you probably need not change anything below...
-###
-
-
-
-###
-# tiny things for convenience
-#
-
-waitforapp() {
-    until [[ ${line} == "APP: READY" ]]
-    do
-        read -t ${KW_TMOUT} line < ${FIFO}
-
-        if [[ $? != 0 ]]
-        then
-            eval ${KILLALL} && sleep 1
-            return 1
-        elif [[ ${line:0:8} == "RES: ERR" ]]
-        then
-            echo ${line}
-            return 1
-        fi
-
-        echo ${line}
-    done
-    line=""
-}
-
-KILLALL="pkill -f 'xulrunner-bin.*krdwrd'"
-
-FIFO=${APP}/krdwrd.fifo
-if [[ ! -p $FIFO ]]; then
-    echo "$(basename $0): created FIFO ${FIFO}"
-    mkfifo $FIFO
-fi
