@@ -8,8 +8,6 @@ else
     . ${CONFIG}
 fi
 
-KW_TMOUT=10
-
 ###
 # tiny things for convenience
 #
@@ -22,6 +20,8 @@ waitforapp() {
         if [[ $? != 0 ]]
         then
             eval ${KILLALL} && sleep 1
+            rm -f ${HOME}/.krdwrd.org.${GRID}/profiles.ini
+            rm -rf ${HOME}/.krdwrd.org.${GRID}/*.default/
             return 1
         elif [[ ${line:0:8} == "RES: ERR" ]]
         then
@@ -36,8 +36,8 @@ waitforapp() {
 
 chkfifo() {
     if [[ ! -p $FIFO ]]; then
+        mkfifo -m 0600 $FIFO || return 1
         echo "$(basename $0): created FIFO ${FIFO}"
-        mkfifo $FIFO
     fi
 }
 #
@@ -56,8 +56,9 @@ then
         > ${APP}/application-${GRID}.ini
 fi
 
-FIFO=${APP}/krdwrd-${GRID}.fifo
-chkfifo
+KW_TMOUT=5
+FIFO=/tmp/krdwrd-${GR_DISPLAY}.fifo
+chkfifo || exit 1
 
 # $(dirname $0)/krdwrd -follow $@ 1>$FIFO 2>&2 &
 DISPLAY=:${GR_DISPLAY}.${KW_SCREEN} ${XULRUNNER} \
