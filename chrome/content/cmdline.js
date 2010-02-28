@@ -18,7 +18,7 @@ Options:\n\
     -out PREFIX\n\
       Basepath for output files* (required by all commands)\n\
     -kwtags\n\
-      Insert <kw> tags around all text blocks (grab only)\n\
+      Insert <kw> tags around all text blocks (grab and pipe only)\n\
     -text\n\
       Write text content to PREFIX.txt (grab only)\n\
     -pic\n\
@@ -35,6 +35,10 @@ Options:\n\
       Stay around and wait for new execution\n\
       Note: you SHOULD wait for the output of 'APP: READY'\n\
             before re-execution\n\
+    -tmout\n\
+      Timeout (in ms) for quitting the App (not follow mode) or\n\
+      for loading a page (follow mode)\n\
+      Note: the output will be 'APP: STOP'\n\
     -proxy URL\n\
       Use the URL as proxy (default proxy.krdwrd.org:8080)\n\
     -js\n\
@@ -44,9 +48,7 @@ Options:\n\
 ";
 
 // command line parameters
-KrdWrdApp.param = { outbase: null, grab: null, merge: null, kwtags: null,
-           dump: null, url: 'http://krdwrd.org/', files: [],
-           text: false, sloppy: false, stats: false, verbose: false, jayscript: false };
+KrdWrdApp.param = {}; 
 
 /*
  * from: https://developer.mozilla.org/en/XULRunner/CommandLine
@@ -76,12 +78,14 @@ CommandLineObserver.prototype = {
      param.outbase = cmdLine.handleFlagWithParam("out", true);
      // keep running, aka. tail -f 
      param.follow = cmdLine.handleFlag("follow", false);
+     // the timeout for loading a page
+     param.tmout = cmdLine.handleFlagWithParam("tmout", false) || 60000;
      // use the system proxy settings from ENV
      param.proxy = cmdLine.handleFlagWithParam("proxy", false)
      param.jayscript = cmdLine.handleFlag("js", false)
 
-
-    var prefManager = Components.classes["@mozilla.org/preferences-service;1"]
+    
+     var prefManager = Components.classes["@mozilla.org/preferences-service;1"]
         .getService(Components.interfaces.nsIPrefBranch);
      if (param.jayscript)
      {
@@ -97,23 +101,23 @@ CommandLineObserver.prototype = {
 
      param.pic = param.pic != null ? !param.pic : true ;
 
-
      if (! param.follow) 
      {
          // auto-kill after 60sec
+         print("OPT: timeout for app is "+param.tmout+"ms");
          timeoutid = setTimeout(function() {
                  error("timeout");
-                 }, 60000);
+                 }, param.tmout);
      }
      else
      {
-        print("OPT: timeout disabled, follow mode");
+        print("OPT: follow mode, timeout for page load is "+param.tmout+"ms");
      }
 
 
      // grabbing
      if (param.grab)
-         param.url = cmdLine.handleFlagWithParam("url", false) || KrdWrdApp.url;
+         param.url = cmdLine.handleFlagWithParam("url", false) || 'http://krdwrd.org';
      // merging annotations
      else if (param.merge)
          for (var i = 0; i<cmdLine.length; i++)
