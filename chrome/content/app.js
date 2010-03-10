@@ -49,6 +49,9 @@ var KrdWrdApp = {
       if (KrdWrdApp.param.jayscript)  
           filterNodes(doc.body, "NOSCRIPT");
 
+      if (KrdWrdApp.param.kwtags)
+          kwtext(doc, doc.body);
+
       for(var propName in pipes)
       {
           if(typeof(pipes[propName]) != "undefined")
@@ -57,7 +60,7 @@ var KrdWrdApp = {
 
               var res = eval("pipes."+propName+".extract(doc.body)");
               saveText(res,KrdWrdApp.param.outbase + '.' + propName);
-              dump("done" + "\n");
+              print("done");
           }
       }
 
@@ -66,7 +69,7 @@ var KrdWrdApp = {
           // save page as png
           dump("PNG: ");
           var res = grabScreen(win, doc);
-          dump((res != null) + "\n");
+          print((res != null));
           saveCanvas(res, KrdWrdApp.param.outbase + '.png');
       }
 
