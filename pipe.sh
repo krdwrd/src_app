@@ -54,12 +54,18 @@ fi
 
 CARGS="-kwtags -pipe "$URL" -out "$OUT" $USEFOLLOW $USEJS $USEPROXY $NOPIC"
 
+_RES=0
 if [ -n "$USEGRID" ]
 then
     $APP/krdwrd-g $CARGS 2>/dev/null
+    _RES=$?
 elif [ -n "$USEFOLLOW" ]
 then
     $APP/krdwrd-f $CARGS
+    _RES=$?
 else
     $APP/krdwrd $CARGS
+    _RES=$?
 fi
+
+exit ${_RES}
