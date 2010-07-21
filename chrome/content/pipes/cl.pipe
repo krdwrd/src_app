@@ -1,17 +1,9 @@
-cl.prototype = new pipe();
-cl.prototype.Constructor = cl();
-
-function cl() 
-{
-}
-
-cl.extract = function(doc)
+var extract = function(doc)
 {
     var res = '';
     f = function (n, t, txt) { res += txt + "\n"; };
     traverse(doc, f);
     return res;
 }
-
 
 // vim: filetype=javascript

@@ -1,16 +1,10 @@
-txt.prototype = new pipe();
-txt.prototype.Constructor = txt();
+// 
+// text paragraphs output. 'collect' text nodes' content until paragraph
+// ends (checked by wsNode()) and output the result as many times as
+// nodes were collected.
+//
 
-function txt() 
-{
-    // 
-    // text paragraphs output. 'collect' text nodes' content until paragraph
-    // ends (checked by wsNode()) and output the result as many times as
-    // nodes were collected.
-    //
-}
-
-txt.extract = function(doc)
+var extract = function(doc)
 {
     traverse(doc, function(node, kw) 
         {

@@ -52,16 +52,12 @@ var KrdWrdApp = {
       if (KrdWrdApp.param.kwtags)
           kwtext(doc, doc.body);
 
-      for(var propName in pipes)
+      for(var p in pipes)
       {
-          if(typeof(pipes[propName]) != "undefined")
-          {
-              dump("PYP: " + propName + "...");
-
-              var res = eval("pipes."+propName+".extract(doc.body)");
-              saveText(res,KrdWrdApp.param.outbase + '.' + propName);
-              print("done");
-          }
+          dump("PYP: " + pipes[p].name + "...");
+          var res = pipes[p].extract(doc.body);
+          saveText(res,KrdWrdApp.param.outbase + '.' + pipes[p].name);
+          print("done");
       }
 
       if (KrdWrdApp.param.pic)

@@ -1,23 +1,17 @@
-bte.prototype = new pipe();
-bte.prototype.Constructor = bte();
+// 
+// Finn's BTE (Body Text Extraction) algorithm for extracting the main body
+// text of a web page and avoiding the surrounding // irrelevant
+// information. The description of the algorithm can be found in
+//
+// A. Finn, N. Kushmerick, and B. Smyth. Fact or Fiction:
+// Content classification for digital libraries. In DELOS Workshop:
+// Personalisation and Recommender System in Digital Libraries, 2001.
+// 
+// Adapted from Jan Pomikálek's version 
+// [http://nlp.fi.muni.cz/~xpomikal/scripts/bte.py]
+//
 
-function bte() 
-{
-    // 
-    // Finn's BTE (Body Text Extraction) algorithm for extracting the main body
-    // text of a web page and avoiding the surrounding // irrelevant
-    // information. The description of the algorithm can be found in
-    //
-    // A. Finn, N. Kushmerick, and B. Smyth. Fact or Fiction:
-    // Content classification for digital libraries. In DELOS Workshop:
-    // Personalisation and Recommender System in Digital Libraries, 2001.
-    // 
-    // Adapted from Jan Pomikálek's version 
-    // [http://nlp.fi.muni.cz/~xpomikal/scripts/bte.py]
-    //
-}
-
-bte.extract = function(doc)
+var extract = function(doc)
 {
     var res = '';
     var bt = [];

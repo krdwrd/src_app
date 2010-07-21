@@ -1,21 +1,28 @@
-
-function pipe()
+pipe = function(name, extract) 
 {
-    function extract(doc)
+    this.name = name;
+    this.extract = extract;
+}    
+
+pipe.prototype = {
+    name: "dummyName",
+    extract: function ()
     {
-        return ""; 
+        return "dummyExtract.";
     }
-}
+};
 
-var pipes = { };
-psize = function (phash) {
-    var len = 0; 
-    for (var elems in phash) {
-        len++;
-    }
-    return len;
-}
+pipes = [];
 
+var addPipe = function (name, extract) {
+    var p = new pipe(name, extract);
+    pipes[pipes.length] = p;
+    dump(p.name + ' ');
+    return p;
+};
+
+// we dynamically load scripts from within the chrome directory:
+//
 // get the chrome directory
 var file = Components.classes["@mozilla.org/file/directory_service;1"].
     getService(Components.interfaces.nsIProperties).
@@ -28,18 +35,22 @@ var loader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
     .getService(Components.interfaces.mozIJSSubScriptLoader);
 
 // load files ending in ".pipe" as scripts into pipes scope
-filesEnum = file.directoryEntries;
+var filesEnum = file.directoryEntries;
 
+// give feed-back about DynJS loading...
+dump("DJS: ");
 while (filesEnum.hasMoreElements())
 {
-    fileName = filesEnum.getNext().QueryInterface(Components.interfaces.nsILocalFile).leafName;
+    var fileName = filesEnum.getNext()
+        .QueryInterface(Components.interfaces.nsILocalFile).leafName;
 
     if (fileName.substring(fileName.lastIndexOf("."),fileName.length) == ".pipe")
     {
-        loader.loadSubScript("chrome://krdwrdapp/content/pipes/"+fileName, pipes);
-
-        if (psize(pipes) == 1) dump("DJS: "+fileName);
-        else dump(", "+fileName);
+        var dynl = {};
+        var name = fileName.substring(0,fileName.lastIndexOf("."))
+        loader.loadSubScript("chrome://krdwrdapp/content/pipes/"+fileName, dynl);
+        addPipe(name, dynl.extract);
     }
 }
-if (psize(pipes) > 0) dump("\n");
+// ...and nicify feed-back. 
+dump("\n");

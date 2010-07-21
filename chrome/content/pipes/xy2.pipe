@@ -1,11 +1,4 @@
-xy2.prototype = new pipe();
-xy2.prototype.Constructor = xy2();
-
-function xy2()
-{
-}
-
-xy2.extract = function(doc)
+var extract = function(doc)
 {
     var res = '';
 

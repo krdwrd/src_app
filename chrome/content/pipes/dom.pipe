@@ -1,11 +1,4 @@
-dom.prototype = new pipe();
-dom.prototype.Constructor = dom();
-
-function dom() 
-{
-}
-
-dom.extract = function(doc)
+var extract = function(doc)
 {
     var res = '';
     //max_treelen = 20;
