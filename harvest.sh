@@ -171,7 +171,7 @@ do
         sed -i '1 s/<?xml[^>]*?>/<?xml version="1.0" encoding="utf-8"?>/' $FN
 
         # fix base url, insert encoding info - hoping that '|' is not part of thr URL
-        sed -i "s|<head\([^>]\+\?\)>|<head\1><base href=\"${APPURL}\"/><meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">|i" $FN
+        sed -i "s|<head\([^>]\+\?\)>|<head\1><base href=\"${APPURL}\" /><meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />|i" $FN
         
         # split pre tags into single lines
         mv $FN $FN.awk
