@@ -59,7 +59,7 @@ then
     $APP/krdwrd-g $CARGS 2>/dev/null
 elif [ -n "$USEFOLLOW" ]
 then
-    $APP/krdwrd-f $CARGS
+    $APP/krdwrd-f $CARGS 2>/dev/null
 else
     $APP/krdwrd $CARGS
 fi

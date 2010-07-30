@@ -58,7 +58,7 @@ for g in $@
 do
     echo $g
     # sanity check
-    if [ $(sort ${g} | uniq -d) ]
+    if [ "$( sort ${g} | uniq -d | tee /dev/stderr )" ]
     then 
         echo "...has duplicate lines - omitting."
         break
