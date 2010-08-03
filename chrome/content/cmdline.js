@@ -13,14 +13,18 @@ Main Commands:\n\
     -pipe URL\n\
        Read document from URL (use file:\/\/ *) and dump data for the processing\n\
        pipelines in PREFIX.{cl,dom,xy,png}\n\
+    -sweep URL\n\
+       Read document from URL and sweep page according to silver tag from -sweepin\n\
 \n\
 Options:\n\
     -out PREFIX\n\
       Basepath for output files* (required by all commands)\n\
-    -kwtags\n\
-      Insert <kw> tags around all text blocks (grab and pipe only)\n\
     -text\n\
       Write text content to PREFIX.txt (grab only)\n\
+    -kwtags\n\
+      Insert <kw> tags around all text blocks (grab and pipe only)\n\
+    -sweepin file\n\
+      Use file to get the silver tags for sweeping (sweep only)\n\
     -pic\n\
       Do NOT write Screenshot to PREFIX.png\n\
     -sloppy\n\
@@ -40,7 +44,7 @@ Options:\n\
       for loading a page (follow mode)\n\
       Note: the output will be 'APP: STOP'\n\
     -proxy URL\n\
-      Use the URL as proxy (default proxy.krdwrd.org:8080)\n\
+      Use URL as proxy (default proxy.krdwrd.org:8080)\n\
     -js\n\
       Activate JavaScript\n\
    \n\n\
@@ -66,16 +70,18 @@ CommandLineObserver.prototype = {
      
      var param = KrdWrdApp.param;
      param.grab = cmdLine.handleFlag("grab", false);
+     param.merge = cmdLine.handleFlag("merge", false);
+     param.pipe = cmdLine.handleFlagWithParam("pipe", false);
+     param.sweep = cmdLine.handleFlagWithParam("sweep", false);
+     param.outbase = cmdLine.handleFlagWithParam("out", true);
      param.text = cmdLine.handleFlag("text", false);
+     param.kwtags = cmdLine.handleFlag("kwtags", false);
+     param.sweepin = cmdLine.handleFlagWithParam("sweepin", false);
      param.pic = cmdLine.handleFlag("pic", false);
      param.sloppy = cmdLine.handleFlag("sloppy", false);
      param.stats = cmdLine.handleFlag("stats", false);
      param.victor = cmdLine.handleFlag("victor", false);
      param.verbose = cmdLine.handleFlag("verbose", false);
-     param.merge = cmdLine.handleFlag("merge", false);
-     param.kwtags = cmdLine.handleFlag("kwtags", false);
-     param.pipe = cmdLine.handleFlagWithParam("pipe", false);
-     param.outbase = cmdLine.handleFlagWithParam("out", true);
      // keep running, aka. tail -f 
      param.follow = cmdLine.handleFlag("follow", false);
      // the timeout for loading a page

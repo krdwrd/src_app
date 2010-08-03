@@ -36,6 +36,13 @@ var KrdWrdApp = {
           mkBrowser(param.pipe, KrdWrdApp.pipeline);
       }
       else
+      if (param.sweep && param.sweepin)
+      {
+          print("CMD: sweep");
+
+          mkBrowser(param.sweep, KrdWrdApp.sweepPage);
+      }
+      else
       {
           print(USAGE);
           error("No command");
@@ -73,6 +80,48 @@ var KrdWrdApp = {
       saveText(res, KrdWrdApp.param.outbase + '.gold');
 
       observerService.notifyObservers(null, "KrdWrdApp", "done");
+  },
+
+  sweepPage: function(doc, win)
+  {
+      print("URL: " + doc.location);
+      var lst = loadText(KrdWrdApp.param.sweepin).split("\n");
+    
+      if (KrdWrdApp.param.jayscript)  
+          filterNodes(doc.body, "NOSCRIPT");
+
+      var i=0;
+      traverse(doc.body, function(node, kw)
+        {
+            node.parentNode.className = filterkw(node.parentNode.className) +
+                "krdwrd-tag-" + lst[i++];
+        }
+      );
+
+      var css = doc.createElement('link');
+      css.rel = "stylesheet";
+      css.type = "text/css";
+      // css.href = "chrome://krdwrdapp/content/krdwrd.css";
+      css.href = "http://krdwrd.org/addon/krdwrd.css";
+      doc.documentElement.childNodes[0].appendChild(css);
+
+      var source = grabSource(doc);
+      if (source)
+        saveText(source, KrdWrdApp.param.outbase + '.html');
+
+      setTimeout(function(){
+              if (KrdWrdApp.param.pic)
+              {
+                  // save page as png
+                  dump("PNG: ");
+                  var res = grabScreen(win, doc);
+                  print((res != null));
+                  saveCanvas(res, KrdWrdApp.param.outbase + '.png');
+              }
+
+              observerService.notifyObservers(null, "KrdWrdApp", "done");
+              },5000);
+
   },
 
   dumpPage: function(doc, win)

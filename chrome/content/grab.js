@@ -45,6 +45,28 @@ function saveText(text, dest)
 
 };
 
+function loadText(src)
+{
+      // convert string filepath to an nsIFile
+      var file = Components.classes["@mozilla.org/file/local;1"]
+                           .createInstance(Components.interfaces.nsILocalFile);
+      file.initWithPath(src);
+
+      // create input stream
+      var ost = Components.classes["@mozilla.org/network/file-input-stream;1"].
+                    createInstance(Components.interfaces.nsIFileInputStream);
+
+      ost.init(file, 0x01, 00004, null);
+
+      var os = Components.classes["@mozilla.org/scriptableinputstream;1"]
+                    .createInstance( Components.interfaces.nsIScriptableInputStream );
+      os.init( ost );
+      var output = os.read( os.available() );
+
+      os.close();
+      return output;
+};
+
 function grabSource(doc)
 {
     return doc.documentElement.innerHTML;
