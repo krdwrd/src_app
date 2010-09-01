@@ -8,7 +8,7 @@ function do_merge(docs, outp)
 
     // get text content of master document
     var text = [];
-    traverse(master.documentElement, function(tx, ta) { text[text.length] = tx.data; });
+    traverse(master.body, function(tx, ta) { text[text.length] = tx.data; });
 
     var ct = count_tags(docs, text);
 
@@ -17,10 +17,10 @@ function do_merge(docs, outp)
     var w = wta(lt);
 
     var ind = 0;
-    traverse(master.documentElement, function(node, kw) {
+    traverse(master.body, function(node, kw) {
             var par = node.parentNode;
             var tag = w[ind] == null ? 'krdwrd-tag-null' : w[ind][1];
-            par.className = filterkw(par.className) + ' ' + tag;
+            par.className = (filterkw(par.className).trim() + " " + tag).trim();
             if (KrdWrdApp.param.victor)
             {
                 par.id = 'krdwrd_an' + ind;
@@ -85,7 +85,7 @@ function count_tags(docs, text)
             doctags[d][ind++] = tag;
         }
 
-        traverse(docs[d].documentElement, count);
+        traverse(docs[d].body, count);
     }
     return doctags;
 }
@@ -142,6 +142,7 @@ function wta(collect)
             {
                 var cur_count = collect[c][a];
                 sum_count += cur_count;
+                
                 if (cur_count > max_count)
                 {
                     max_count = cur_count;
@@ -179,13 +180,9 @@ function wta(collect)
 
 function collect_stats(docs, ct, w, text)
 {
-    String.prototype.trim = function () {
-        return this.replace(/^\s+|\s+$/g, "");
-    };
-
     var out = '';
     out += '# submitted : ' +  docs.length + '\n';
-    out += 'chars' + '\t' + 'merged' + '\t';
+    out += '# tokens' + '\t' + 'merged' + '\t';
 
     for (var v in docs)
     {
@@ -212,12 +209,12 @@ function collect_stats(docs, ct, w, text)
         if (rows_tmp > rows) rows = rows_tmp;
     }
 
-    // write 1st and 2nd column: #chars, winner-tag
+    // write 1st and 2nd column: #BTE-like tokens, winning-tag
     for (var r=0; r < rows; r++)
     {
         chars = winner = undefined;
 
-        try { chars = text[r].length; } catch (err) {}
+        try { chars = text[r].btelen(); } catch (err) {}
         try { winner = w[r][1]; } catch (err) {}
 
         coding_table[r][0] =  chars + '\t' + winner; 

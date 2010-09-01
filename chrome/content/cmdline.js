@@ -126,6 +126,7 @@ CommandLineObserver.prototype = {
          param.url = cmdLine.handleFlagWithParam("url", false) || 'http://krdwrd.org';
      // merging annotations
      else if (param.merge)
+         param.files = [];
          for (var i = 0; i<cmdLine.length; i++)
          {
              param.files[param.files.length] = cmdLine.getArgument(i);

@@ -93,8 +93,8 @@ var KrdWrdApp = {
       var i=0;
       traverse(doc.body, function(node, kw)
         {
-            node.parentNode.className = filterkw(node.parentNode.className) +
-                "krdwrd-tag-" + lst[i++];
+            node.parentNode.className = (filterkw(node.parentNode.className) +
+                " krdwrd-tag-" + lst[i++]).trim();
         }
       );
 

@@ -47,7 +47,7 @@ var extract = function(doc)
         for (child in node.childNodes)
         {
             cnode = node.childNodes[child];
-            if (cnode.nodeName != "SCRIPT")
+            if (recursehere(cnode))
                 rec(cnode, nparen);
         }
     };
