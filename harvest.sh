@@ -109,7 +109,7 @@ do
             # exists
             echo -n "*"
             continue
-        elif [[ -f $LOG && $(grep -cE "^FAILED$" ${LOG}) -ge ${RETRIES} ]]
+        elif [[ -f $LOG && $(grep -cE "^FAILED( - .)?$" ${LOG}) -ge ${RETRIES} ]]
         then 
             # capitulated
             echo -n "c"
@@ -139,15 +139,27 @@ do
         if [[ ${_RES} != 0 || ! -f $FN ]]
         then
             echo "NOT: '$url'" >> $LOG
-            echo "FAILED" >> $LOG
+            echo -n "FAILED" >> $LOG
 
             if [ ${_RES} = 10 ]
             then 
                 # timeout -> killed
                 echo -n "k"
-            else
-                # failed 
+                echo " - k" >> $LOG
+            elif [ ${_RES} = 20 ]
+            then
+                # failed
                 echo -n "f"
+                echo " - f" >> $LOG
+            elif [ ${_RES} = 30 ] 
+            then
+                # stopped - page load timeout
+                echo -n "s"
+                echo " - s" >> $LOG
+            else
+                # unknown failure
+                echo -n "u"
+                echo " - u" >> $LOG
             fi
             continue
         fi

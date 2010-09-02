@@ -20,32 +20,39 @@ waitforapp() {
         if [[ $? != 0 ]]
         then
             eval ${KILLALL} && sleep 1
-            return 1
+            rm -f "${HOME}/.krdwrd.org/profiles.ini"
+            rm -rf "${HOME}"/.krdwrd.org/*.default/
+            return 10
         elif [[ ${line:0:8} == "RES: ERR" ]]
         then
-            echo ${line}
-            return 1
+            echo "${line}"
+            return 20
+        elif [[ ${line:0:9} == "APP: STOP" ]]
+        then
+            echo "${line}"
+            return 30
         fi
 
-        echo ${line}
+        echo "${line}"
     done
     line=""
 }
 
 chkfifo() {
     if [[ ! -p $FIFO ]]; then
+        mkfifo -m 0600 $FIFO || return 1
         echo "$(basename $0): created FIFO ${FIFO}"
-        mkfifo $FIFO
     fi
 }
 #
 #
 ###
 
+#KW_TMOUT=8
 FIFO=${APP}/krdwrd.fifo
-chkfifo
+chkfifo || exit 1
 
-$(dirname $0)/krdwrd -follow $@ 1>$FIFO 2>&2 &
+$(dirname $0)/krdwrd -follow -tmout 10000 $@ 1>$FIFO 2>&2 &
 
-KILLALL="pkill -f 'xulrunner-bin.*krdwrd'"
+KILLALL="pkill -9 -f 'xulrunner-bin.*krdwrd'"
 waitforapp

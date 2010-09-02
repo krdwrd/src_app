@@ -10,11 +10,20 @@ fi
 
 if [[ ${KW_XVFB} == "true" ]]
 then
-    if [[ ! $(pgrep -f "Xvfb :${KW_DISPLAY} -screen ${KW_SCREEN}") ]]; then
-        Xvfb :${KW_DISPLAY} -screen ${KW_SCREEN} 1024x768x24 > /dev/null 2>&1 & 
-        echo $(basename $0): Started Xvfb, DISPLAY is :${KW_DISPLAY}.${KW_SCREEN} 
-    fi
-    DISPLAY=:${KW_DISPLAY}.${KW_SCREEN} ${XULRUNNER} $APP/application.ini $@
-else
-    ${XULRUNNER} $APP/application.ini $@
+    if [[ ! $(pgrep -f "Xvfb :${KW_DISPLAY} -screen ${KW_SCREEN}") ]]
+    then
+        Xvfb :${KW_DISPLAY} -screen ${KW_SCREEN} 1024x768x24 -nolisten tcp \
+            > /dev/null 2>&1 & 
+    
+        if [[ $(jobs -r 'Xvfb :${KW_DISPLAY} -screen ${KW_SCREEN}') ]]
+        then
+            echo $(basename $0): Started Xvfb, DISPLAY is :${KW_DISPLAY}.${KW_SCREEN} 
+        else
+            echo $(basename $0): Could not start Xvfb, DISPLAY was :${KW_DISPLAY}.${KW_SCREEN} 
+            exit 1
+        fi  
+    fi  
+    export DISPLAY=:${KW_DISPLAY}.${KW_SCREEN}
 fi
+
+${XULRUNNER} $APP/application.ini $@
