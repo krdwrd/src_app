@@ -54,12 +54,23 @@ fi
 
 CARGS="-kwtags -text -grab -url "$URL" -out "$OUT" $USEFOLLOW $USEJS $USEPROXY $NOPIC"
 
+_RES=0
 if [ -n "$USEGRID" ]
 then
-    $APP/krdwrd-g $CARGS 2>/dev/null
-elif [ -n "$USEFOLLOW" ]
+    if [[ -z ${GRID} || -z ${GR_DISPLAY} ]]
+    then
+        echo "$(basename $0): missing value for GRID/GR_DISPLAY"
+        exit 1
+    fi
+fi
+
+if [ -n "$USEFOLLOW" ]
 then
     $APP/krdwrd-f $CARGS 2>/dev/null
+    _RES=$?
 else
     $APP/krdwrd $CARGS
+    _RES=$?
 fi
+
+exit ${_RES}

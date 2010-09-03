@@ -26,4 +26,4 @@ then
     export DISPLAY=:${KW_DISPLAY}.${KW_SCREEN}
 fi
 
-${XULRUNNER} $APP/application.ini $@
+${XULRUNNER} $APPINI $@

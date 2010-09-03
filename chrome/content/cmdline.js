@@ -40,8 +40,9 @@ Options:\n\
       Note: you SHOULD wait for the output of 'APP: READY'\n\
             before re-execution\n\
     -tmout\n\
-      Timeout (in ms) for quitting the App (not follow mode) or\n\
-      for loading a page (follow mode)\n\
+      Timeout (in ms) for \n\
+       * quitting the App (not follow mode) or\n\
+       * loading a page (follow mode)\n\
       Note: the output will be 'APP: STOP'\n\
     -proxy URL\n\
       Use URL as proxy (default proxy.krdwrd.org:8080)\n\

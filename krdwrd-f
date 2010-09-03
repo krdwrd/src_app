@@ -20,8 +20,8 @@ waitforapp() {
         if [[ $? != 0 ]]
         then
             eval ${KILLALL} && sleep 1
-            rm -f "${HOME}/.krdwrd.org/profiles.ini"
-            rm -rf "${HOME}"/.krdwrd.org/*.default/
+            rm -f "${APPPROFILEDIR}/profiles.ini"
+            rm -rf "${APPPROFILEDIR}"/*.default/
             return 10
         elif [[ ${line:0:8} == "RES: ERR" ]]
         then
@@ -48,11 +48,27 @@ chkfifo() {
 #
 ###
 
-#KW_TMOUT=8
-FIFO=${APP}/krdwrd.fifo
+if [ ${GRID:+1} ]
+then
+    FIFO=${TMPDIR:-"/tmp"}/krdwrd-${GR_DISPLAY}.fifo
+    APPPROFILEDIR="${HOME}/.krdwrd.org.${GRID}"
+    KILLALL="pkill -9 -f 'xulrunner-bin.*-KWID${GRID}.ini'"
+
+    APPINI=${APP}/application-${GRID}.ini
+    export APPINI
+    if [[ ! -e $APPINI ]]
+    then
+        sed -e "s#^ID\(.*\)#ID\1\nProfile=krdwrd.org.${GRID}#" ${APP}/application.ini \
+            > ${APPINI}
+        echo "$(basename $0): created file $APPINI"
+    fi
+    export KW_DISPLAY=${GR_DISPLAY}
+else
+    FIFO=${APP}/krdwrd.fifo
+    APPPROFILEDIR="${HOME}/.krdwrd.org/krdwrd"
+    KILLALL="pkill -9 -f 'xulrunner-bin.*-KWID.ini'"
+fi
+
 chkfifo || exit 1
-
-$(dirname $0)/krdwrd -follow -tmout 10000 $@ 1>$FIFO 2>&2 &
-
-KILLALL="pkill -9 -f 'xulrunner-bin.*krdwrd'"
+$(dirname $0)/krdwrd -follow -KWID${GRID}.ini -tmout 10000 $@ 1>$FIFO 2>&2 &
 waitforapp

@@ -2,12 +2,14 @@
 # example config file for scripts running the KrdWrdApp
 #
 
-KW_DISPLAY=66
-KW_SCREEN=0 
-KW_XVFB=true # false
+CORPUS=${CORPUS:-"canola"}
+KW_DISPLAY=${KW_DISPLAY:-"66"}
+KW_SCREEN=${KW_SCREEN:-"0"} 
+KW_XVFB=${KW_XVFB:-"true"} # false
 
-XULRUNNER=~/krdwrd/trunk/external/XULRunner/xulrunner
-APP=~/krdwrd/trunk/src/app
+XULRUNNER=${XULRUNNER:-~/krdwrd/trunk/external/XULRunner/xulrunner}
+APP=${APP:-~/krdwrd/trunk/src/app}
+APPINI=${APPINI:=$APP/application.ini}
 
 # timeout for follow mode - in seconds
-KW_TMOUT=15
+KW_TMOUT=${KW_TMOUT:-"15"}
