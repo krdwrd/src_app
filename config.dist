@@ -2,7 +2,6 @@
 # example config file for scripts running the KrdWrdApp
 #
 
-CORPUS=${CORPUS:-"canola"}
 KW_DISPLAY=${KW_DISPLAY:-"66"}
 KW_SCREEN=${KW_SCREEN:-"0"} 
 KW_XVFB=${KW_XVFB:-"true"} # false
