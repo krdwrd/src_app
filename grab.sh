@@ -52,7 +52,7 @@ then
     usage
 fi
 
-CARGS="-kwtags -text -grab -url "$URL" -out "$OUT" $USEFOLLOW $USEJS $USEPROXY $NOPIC"
+CARGS="-kwtags -text -grab -url "$URL" -out "$OUT" $USEJS $USEPROXY $NOPIC"
 
 _RES=0
 if [ -n "$USEGRID" ]
