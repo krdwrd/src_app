@@ -68,7 +68,7 @@ do
     cat=$(basename $g .ggx)
 
     # create directory for the output files
-    [ -d ${cat} ] || mkdir ${cat}
+    [ -d ${cat} ] || mkdir ${cat} || exit 1
     
     # build a list of already processed files for later look-up
     processed=
