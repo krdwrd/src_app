@@ -31,6 +31,8 @@ Options:\n\
       Ignore differences in text content during merge (merge only)\n\
     -stats\n\
       Output statistics (merge only)\n\
+    -finalmrg\n\
+      resolve mrgtie via last file from FILELIST (merge only)\n\
     -victor\n\
       victor export\n\
     -verbose\n\
@@ -81,6 +83,7 @@ CommandLineObserver.prototype = {
      param.pic = cmdLine.handleFlag("pic", false);
      param.sloppy = cmdLine.handleFlag("sloppy", false);
      param.stats = cmdLine.handleFlag("stats", false);
+     param.finalmrg = cmdLine.handleFlag("finalmrg", false);
      param.victor = cmdLine.handleFlag("victor", false);
      param.verbose = cmdLine.handleFlag("verbose", false);
      // keep running, aka. tail -f 

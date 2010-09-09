@@ -14,7 +14,7 @@ function do_merge(docs, outp)
 
     var lt = collect_tags(ct);
 
-    var w = wta(lt);
+    var w = wta(lt,ct);
 
     var ind = 0;
     traverse(master.body, function(node, kw) {
@@ -126,7 +126,7 @@ function collect_tags(doctags)
     return collect;
 }
 
-function wta(collect)
+function wta(collect, doctags)
 {
     var win = new Array(collect.length);
 
@@ -150,7 +150,12 @@ function wta(collect)
                 }
                 else if (cur_count == max_count)
                 {
-                    max_elem = 'krdwrd-tag-mrgtie';
+                    if (KrdWrdApp.param.finalmrg)
+                    {
+                        max_elem = doctags[doctags.length-1][c];
+                    } else {
+                        max_elem = 'krdwrd-tag-mrgtie';
+                    }
                 }
             }
            
