@@ -16,7 +16,7 @@ pipes = [];
 
 var addPipe = function (name, extract) {
     var p = new pipe(name, extract);
-    pipes[pipes.length] = p;
+    pipes[name] = p;
     dump(p.name + ' ');
     return p;
 };
