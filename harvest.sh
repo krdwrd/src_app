@@ -1,7 +1,7 @@
 #!/bin/bash
 
 export LANG=en_US.UTF-8
-RETRIES=3
+RETRIES=${RETRIES:-"3"}
 USEFOLLOW="-f" # ""
 USEJS="" # "-j"
 USEPROXY="" # "-p host:port" or "-p \"\""
