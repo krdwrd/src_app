@@ -102,7 +102,7 @@ do
         # skip if file exists
         # skip if too many tries
         # create lock while processing
-        if [[ -f $FN ]]
+        if [[ -f ${FN} ]]
         then
             echo "DATE: "$(date) >> $LOG
             echo "EXISTS" >> $LOG
@@ -136,8 +136,9 @@ do
         # remove lock
         rmdir ${FN}.lock
         
-        if [[ ${_RES} != 0 || ! -f $FN ]]
+        if [[ ${_RES} != 0 || ! -f ${FN} ]]
         then
+            rm ${FN} 2>/dev/null
             echo "NOT: '$url'" >> $LOG
             echo -n "FAILED" >> $LOG
 
@@ -178,10 +179,10 @@ do
         #cp $FN $FN.orig
         #iconv -c -t utf8 -f $ENC $FN.orig -o $FN >> $LOG
 
+        # following http://www.w3.org/International/tutorials/tutorial-char-enc/
         # replace previous charset definition
         sed -i 's/<meta http-equiv\ *=\ *"content-type"[^>]*>//i' $FN
         sed -i '1 s/<?xml[^>]*?>/<?xml version="1.0" encoding="utf-8"?>/' $FN
-
         # fix base url, insert encoding info - hoping that '|' is not part of thr URL
         sed -i "s|<head\([^>]\+\?\)>|<head\1><base href=\"${APPURL}\" /><meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />|i" $FN
         
