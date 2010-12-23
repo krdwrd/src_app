@@ -35,3 +35,6 @@ pref("security.warn_submit_insecure", false);
 pref("security.warn_submit_insecure.show_once", false);
 pref("security.warn_viewing_mixed", false);
 pref("security.warn_viewing_mixed.show_once", false);
+
+// Show an error page for pages that couldn't be loaded - instead of an alert
+pref("browser.xul.error_pages.enabled", true);
