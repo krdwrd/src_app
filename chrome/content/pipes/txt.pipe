@@ -20,33 +20,6 @@ var extract = function(doc)
         var txind = 0;
         var line = "";
 
-        // returns true for 'interrupting' nodes 
-        wsNode = function (node)
-        {
-            var nn = node.nodeName + "";
-
-            return (nn == "P" ||
-                nn == "DIV" ||
-                nn == "BR" ||
-                nn == "BLOCKQUOTE" ||
-                nn == "DL" ||
-                nn == "UL" ||
-                nn == "OL" ||
-                nn == "LI" ||
-                nn == "TR" ||
-                nn == "TH" ||
-                nn == "TD" ||
-                nn == "TABLE" ||
-                nn == "OPTION" ||
-                nn == "PRE" ||
-                nn == "H1" ||
-                nn == "H2" ||
-                nn == "H3" ||
-                nn == "H4" ||
-                nn == "H5" ||
-                nn == "H6");
-        };
-
         function prtLines()
         {
             for (i=0; i < txind; i++) txt[txt.length] = 
