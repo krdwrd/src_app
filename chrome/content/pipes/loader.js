@@ -44,7 +44,13 @@ while (filesEnum.hasMoreElements())
     var fileName = filesEnum.getNext()
         .QueryInterface(Components.interfaces.nsILocalFile).leafName;
 
-    if (fileName.substring(fileName.lastIndexOf("."),fileName.length) == ".pipe")
+    if ((KrdWrdApp.param.pipes == "ALL" || KrdWrdApp.param.pipes.some(function(x)
+                    {
+                        return (fileName.substring(0,fileName.lastIndexOf(".")) == x)
+                    }) 
+            ) 
+            && 
+            fileName.substring(fileName.lastIndexOf("."),fileName.length) == ".pipe")
     {
         var dynl = {};
         var name = fileName.substring(0,fileName.lastIndexOf("."))

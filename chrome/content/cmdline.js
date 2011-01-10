@@ -23,6 +23,8 @@ Options:\n\
       Write text content to PREFIX.txt (grab only)\n\
     -kwtags\n\
       Insert <kw> tags around all text blocks (grab and pipe only)\n\
+    -pipes pipe1,pipe2,...\n\
+      Only load named pipes instead of ALL (pipe only)\n\
     -sweepin file\n\
       Use file to get the silver tags for sweeping (sweep only)\n\
     -pic\n\
@@ -79,6 +81,7 @@ CommandLineObserver.prototype = {
      param.outbase = cmdLine.handleFlagWithParam("out", true);
      param.text = cmdLine.handleFlag("text", false);
      param.kwtags = cmdLine.handleFlag("kwtags", false);
+     param.pipes = cmdLine.handleFlagWithParam("pipes", false);
      param.sweepin = cmdLine.handleFlagWithParam("sweepin", false);
      param.pic = cmdLine.handleFlag("pic", false);
      param.sloppy = cmdLine.handleFlag("sloppy", false);
@@ -124,6 +127,10 @@ CommandLineObserver.prototype = {
         print("OPT: follow mode, timeout for page load is "+param.tmout+"ms");
      }
 
+     if (param.pipes)
+         param.pipes = param.pipes.split(',');
+     else
+         param.pipes = "ALL";
 
      // grabbing
      if (param.grab)
