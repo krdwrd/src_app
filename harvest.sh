@@ -1,12 +1,12 @@
 #!/bin/bash
 
 export LANG=en_US.UTF-8
-RETRIES=${RETRIES:-"3"}
-USEFOLLOW="-f" # ""
-USEJS="" # "-j"
-USEPROXY="" # "-p host:port" or "-p \"\""
-NOPIC="" # "-s"
-USEGRID="" # "-g"
+RETRIES=${KW_RETRIES:-"3"}
+USEFOLLOW=${KW_USEFOLLOW:-"-f"} # ""
+USEJS=${KW_USEJS:-""} # "-j"
+USEPROXY=${KW_USEPROXY:-"-p 192.168.0.1:8080"} # "-p host:port" or "-p \"\""
+NOPIC=${KW_NOPIC:-""} # "-s"
+USEGRID=${KW_USEGRID:-""} # "-g"
 
 function usage
 {
@@ -136,7 +136,7 @@ do
         # remove lock
         rmdir ${FN}.lock
         
-        if [[ ${_RES} != 0 || ! -f ${FN} ]]
+        if [[ "$(grep -E "^HRS:" "${LOG}" | tail -n1 | cut -c1-8)" = "HRS: ERR" || ${_RES} != 0 || ! -f ${FN} ]]
         then
             rm ${FN} 2>/dev/null
             echo "NOT: '$url'" >> $LOG
