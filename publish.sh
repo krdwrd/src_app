@@ -22,6 +22,9 @@ EOH
  exit 1
 fi
 
+GT=${KW_GT:-"500"}
+LT=${KW_LT:-"6000"}
+
 SRC=$1
 FILELIST=$2
 c=0
@@ -38,16 +41,24 @@ do
     # if [[ "$W" -gt 100 && "$W" -lt 1200 ]]
     
     # for en, de, it
-    if [[ "$W" -gt 500 && "$W" -lt 6000 ]]
+    if [[ "$W" -gt ${GT} && "$W" -lt ${LT} ]]
     then
-        URL=`awk '/^URL:/ { print $2; }' < $SRC/$B.log | tail -n 1` 
-        echo -n "$B "
-        echo "$URL `pwd`/$SRC/$B.html" >> $FILELIST
-        let c++
+        URL=$(awk '/^URL:/ { print $2; }' < $SRC/$B.log | tail -n 1)
+        if [ "${URL:0:4}" = "http" ] 
+        then
+            echo -n "$B "
+            echo "$URL `pwd`/$SRC/$B.html" >> $FILELIST
+            let c++
+        else
+            echo -n "!${B}:url "
+        fi
     else
         echo -n "!${B}:$W "
     fi
 done
+
+cut -f 1 -d ' ' $FILELIST | sort | uniq -c | grep -v " 1 http" \
+&& echo "URLs appear more than once!"
 
 total=`ls $SRC/*.log | wc -l`
 per=`echo "scale = 1; 100 * $c / $total;" | bc`
