@@ -146,6 +146,7 @@ var KrdWrdApp = {
       {
           var txt = pipes.cl.extract(doc.body);
           print("TXT: " + txt.length + " chars");
+          print("TXT: " + txt.btelen() + " btetoks");
           saveText(txt, KrdWrdApp.param.outbase + '.txt');
       }
 
