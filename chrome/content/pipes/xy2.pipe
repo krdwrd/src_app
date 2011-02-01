@@ -77,6 +77,9 @@ var extract = function(doc)
                     1 : (bwidth * bheight)); // 14
             }
 
+            // https://developer.mozilla.org/en/DOM/Element.getClientRects
+            // and also (for XUL ver > 2):
+            // https://developer.mozilla.org/en/DOM/range.getClientRects
             var rects = pn.getClientRects();
             r[r.length] = rects ? rects.length / 4 : -1; // 15
             addrects(rects);
