@@ -19,6 +19,7 @@ Wrapper for $(dirname $0)/grab.sh: Grab URLs listed in files.\n\
     status output:
          c:apitulated
          f:ailed
+         h:TTP response status error
          k:illed
          l:ocked
          .:found in inital sweep - file existed then
@@ -157,6 +158,12 @@ do
                 # stopped - page load timeout
                 echo -n "s"
                 echo " - s" >> $LOG
+            elif [ "$(grep -E "^HRS:" "${LOG}" | tail -n1 | cut -c1-8)" = "HRS: ERR" ]
+            then
+                # HTTP Response Status
+                # not any of: 200 301 302 303 304 307
+                echo -n "h"
+                echo " - h" >> $LOG
             else
                 # unknown failure
                 echo -n "u"
