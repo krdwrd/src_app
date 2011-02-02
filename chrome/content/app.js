@@ -126,7 +126,6 @@ var KrdWrdApp = {
 
   dumpPage: function(doc, win)
   {
-    print("URL: " + doc.location);
 
     try
     {
@@ -136,6 +135,8 @@ var KrdWrdApp = {
       if (KrdWrdApp.param.kwtags)
           kwtext(doc, doc.body);
 
+      print("URL: " + doc.location);
+      
       // save html
       var source = grabSource(doc);
       print("HTML: " + (source != null));
@@ -162,7 +163,7 @@ var KrdWrdApp = {
     catch (e)
     {
       error(format_exception(e));
-    };
+    }
     print("RES: SUCCESS");
 
     setTimeout(function() { 
@@ -171,8 +172,9 @@ var KrdWrdApp = {
 
   },
 
-  observerService:  Components.classes["@mozilla.org/observer-service;1"]
-                        .getService(Components.interfaces.nsIObserverService),
+  observerService:  Components.classes["@mozilla.org/observer-service;1"].
+                        getService(Components.interfaces.nsIObserverService)
+
 };
 
 
@@ -193,13 +195,13 @@ KrdWrdAppOb.prototype = {
       }
     },
     register: function() {
-      var observerService = Components.classes["@mozilla.org/observer-service;1"]
-                            .getService(Components.interfaces.nsIObserverService);
+      var observerService = Components.classes["@mozilla.org/observer-service;1"].
+          getService(Components.interfaces.nsIObserverService);
       observerService.addObserver(this, "KrdWrdApp", false);
     },
     unregister: function() {
-      var observerService = Components.classes["@mozilla.org/observer-service;1"]
-                              .getService(Components.interfaces.nsIObserverService);
+      var observerService = Components.classes["@mozilla.org/observer-service;1"].
+          getService(Components.interfaces.nsIObserverService);
       observerService.removeObserver(this, "KrdWrdApp");
     }
 };
@@ -216,14 +218,14 @@ function runkrdwrd()
     catch (e)
     {
         error(format_exception(e));
-    };
+    }
 }
 
 
 // close another - i.e. a different - open window; this happens
 // when the app is being re-executed
-var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
-    .getService(Components.interfaces.nsIWindowMediator);
+var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"].
+getService(Components.interfaces.nsIWindowMediator);
 var wenum = wm.getEnumerator(null);
 while(wenum.hasMoreElements()) {
    var win = wenum.getNext();
