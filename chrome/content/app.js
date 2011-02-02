@@ -165,7 +165,10 @@ var KrdWrdApp = {
     };
     print("RES: SUCCESS");
 
-    observerService.notifyObservers(null, "KrdWrdApp", "done");
+    setTimeout(function() { 
+            observerService.notifyObservers(null, "KrdWrdApp", "done");
+            },100);
+
   },
 
   observerService:  Components.classes["@mozilla.org/observer-service;1"]
