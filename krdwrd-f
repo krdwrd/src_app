@@ -22,6 +22,7 @@ waitforapp() {
             eval ${KILLALL} && sleep 1
             rm -f "${APPPROFILEDIR}/profiles.ini"
             rm -rf "${APPPROFILEDIR}"/*.default/
+            rm -f "${FIFO}"
             return 10
         elif [[ ${line:0:8} == "RES: ERR" ]]
         then
