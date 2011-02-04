@@ -20,8 +20,7 @@ waitforapp() {
         if [[ $? != 0 ]]
         then
             eval ${KILLALL} && sleep 1
-            rm -f "${APPPROFILEDIR}/profiles.ini"
-            rm -rf "${APPPROFILEDIR}"/*.default/
+            rm -rf "${APPPROFILEDIR}"
             rm -f "${FIFO}"
             return 10
         elif [[ ${line:0:8} == "RES: ERR" ]]
@@ -52,7 +51,7 @@ chkfifo() {
 if [ ${GRID:+1} ]
 then
     FIFO=${TMPDIR:-"/tmp"}/krdwrd-${GR_DISPLAY}.fifo
-    APPPROFILEDIR="${HOME}/.krdwrd.org.${GRID}"
+    APPPROFILEDIR="${TMPDIR:-"/tmp"}/.krdwrd.org.${GRID}"
     KILLALL="pkill -9 -f 'xulrunner-bin.*-KWID${GRID}.ini'"
 
     APPINI=${APP}/application-${GRID}.ini
@@ -71,5 +70,6 @@ else
 fi
 
 chkfifo || exit 1
-$(dirname $0)/krdwrd -follow -KWID${GRID}.ini -tmout 10000 $@ 1>$FIFO 2>&2 &
+mkdir -p ${APPPROFILEDIR} || exit 1
+$(dirname $0)/krdwrd -profile "${APPPROFILEDIR}" -follow -KWID${GRID}.ini -tmout 10000 $@ 1>$FIFO 2>&2 &
 waitforapp
