@@ -12,3 +12,6 @@ APPINI=${APPINI:=$APP/application.ini}
 
 # timeout for follow mode - in seconds
 KW_TMOUT=${KW_TMOUT:-"15"}
+
+# disable plugins
+export MOZ_PLUGINS=/dev/null
