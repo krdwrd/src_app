@@ -12,7 +12,3 @@ APPINI=${APPINI:=$APP/application.ini}
 
 # timeout for follow mode - in seconds
 KW_TMOUT=${KW_TMOUT:-"15"}
-
-# disable all plugins
-# for flash alone this: http://flashblock.mozdev.org/ might also work
-export MOZ_PLUGINS=/dev/null
