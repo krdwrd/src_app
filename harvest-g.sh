@@ -59,7 +59,8 @@ do
 
     # this gives us the URL as the app printed it
     APPURL=$(awk '/^URL:/ { sub("^URL: ","");print $0; }' $LOG | tail -n 1)
-    APPBTETOKS=$(awk '/TXT:.*bte/ { print $2; }' $LOG)
+    APPCHARS=$(awk '/TXT:.*chars/ { print $2; }' $LOG)
+    APPBTETOKS=$(awk '/TXT:.*btetoks/ { print $2; }' $LOG)
 
     if [[ "$(grep -E "^HRS:" "${LOG}" | tail -n1 | cut -c1-8)" = "HRS: ERR" || ${_RES} != 0 || ! -f ${FN} ]]
     then
@@ -96,9 +97,9 @@ do
             echo " - u" >> $LOG
         fi
     else
-        curl --fail --silent --insecure -u krdwrd: -F "page_id=${page_id}" -F "url=${APPURL}" -F "words=${APPBTETOKS}" https://krdwrd.org/pages/harvest/success \
+        curl --fail --silent --insecure -u krdwrd: -F "page_id=${page_id}" -F "url=${APPURL}" -F "chars=${APPCHARS}" -F "btetoks=${APPBTETOKS}" https://krdwrd.org/pages/harvest/success \
         && echo -n "+" \
-        || echo -n "ERR: posting success failed - page_id=${page_id}, url=${APPURL}, words=${APPBTETOKS}"
+        || echo -n "ERR: posting success failed - page_id=${page_id}, url=${APPURL}, chars=${APPCHARS}, btetoks=${APPBTETOKS}"
         rm ${OUTBASE}.{html,txt}
     fi
     #rm ${OUTBASE}.log
