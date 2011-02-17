@@ -12,10 +12,14 @@ if [[ ${KW_XVFB} == "true" ]]
 then
     if [[ ! $(pgrep -f "Xvfb :${KW_DISPLAY} -screen ${KW_SCREEN}") ]]
     then
-        Xvfb :${KW_DISPLAY} -screen ${KW_SCREEN} 1024x768x24 -nolisten tcp \
+        # prevent us from hitting the bug:
+        # "X doesn't work with TMP/TMPDIR on different file system than /tmp"
+        # http://lists.mandriva.com/bugs/2009-12/msg00244.php
+        TMP=/tmp TMPDIR=/tmp \
+            Xvfb :${KW_DISPLAY} -screen ${KW_SCREEN} 1024x768x24 -nolisten tcp \
             > /dev/null 2>&1 & 
     
-        if [[ $(jobs -r 'Xvfb :${KW_DISPLAY} -screen ${KW_SCREEN}') ]]
+        if [[ $(jobs -r 'TMP=/tmp TMPDIR=/tmp Xvfb :${KW_DISPLAY} -screen ${KW_SCREEN}') ]]
         then
             echo $(basename $0): Started Xvfb, DISPLAY is :${KW_DISPLAY}.${KW_SCREEN} 
         else
