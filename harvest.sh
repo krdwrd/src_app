@@ -1,12 +1,12 @@
 #!/bin/bash
 
 export LANG=en_US.UTF-8
-RETRIES=${KW_RETRIES:-"3"}
-USEFOLLOW=${KW_USEFOLLOW:-"-f"} # ""
-USEJS=${KW_USEJS:-""} # "-j"
-USEPROXY=${KW_USEPROXY:-"-p 192.168.0.1:8080"} # "-p host:port" or "-p \"\""
-NOPIC=${KW_NOPIC:-""} # "-s"
-USEGRID=${KW_USEGRID:-""} # "-g"
+RETRIES=${KW_RETRIES-"3"}
+USEFOLLOW=${KW_USEFOLLOW-"-f"} # ""
+USEJS=${KW_USEJS-""} # "-j"
+USEPROXY=${KW_USEPROXY-"-p 192.168.0.1:8080"} # "-p host:port" or "-p \"\""
+NOPIC=${KW_NOPIC-""} # "-s"
+USEGRID=${KW_USEGRID-""} # "-g"
 
 function usage
 {
