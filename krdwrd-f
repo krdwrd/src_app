@@ -34,8 +34,11 @@ waitforapp() {
             return 20
         elif [[ ${line:0:9} == "APP: STOP" ]]
         then
-            echo "${line}"
-            return 30
+            # APP: STOP is not a critical error - just some content on the page
+            # might be missing...
+            # echo "${line}"
+            # return 30
+            :
         fi
 
         echo "${line}"
