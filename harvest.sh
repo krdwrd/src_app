@@ -170,6 +170,7 @@ do
                 echo -n "u"
                 echo " - u" >> $LOG
             fi
+            echo -n ":${ind}"
             continue
         fi
 
