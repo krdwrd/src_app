@@ -11,7 +11,7 @@ fi
 function usage
 {
     echo -e "Usage: $(basename $0)" \
-        "[-f] [-g] [-j] [-p ARG] [-s] http://url /absolute/output/path\n\
+        "[-f] [-g] [-j] [-p ARG] [-s] [-v] http://url /absolute/output/path\n\
 Wrapper for $(dirname $0)/krdwrd: grab mode.\n\
 (Implements logic to have multiple Apps run in parallel.)\n\
 \n\
@@ -19,12 +19,14 @@ Wrapper for $(dirname $0)/krdwrd: grab mode.\n\
         -g: use grid logic\n\
         -j: activate JavaScript\n\
         -p ARG: use ARG as http(s) proxy\n\
-        -s: DISABLE screenshot"
+        -s: DISABLE screenshot\n\
+        -t: set app's timeout 'until STOP' in ms\n\
+        -v: verbose"
     exit 1
 }
 
-unset USEFOLLOW USEGRID USEJS USEPROXY NOPIC
-while getopts ":fgjp:s" opt
+unset USEFOLLOW USEGRID USEJS USEPROXY NOPIC APPTMOUT VERBOSE
+while getopts ":fgjp:st:v" opt
 do
     case $opt in
         f ) USEFOLLOW="-follow"
@@ -36,6 +38,10 @@ do
         p ) USEPROXY="-proxy $OPTARG"
             ;;
         s ) NOPIC="-pic"
+            ;;
+        t ) APPTMOUT="-tmout $OPTARG"
+            ;;
+        v ) VERBOSE="-verbose"
             ;;
         \?) usage
             ;;
@@ -52,7 +58,7 @@ then
     usage
 fi
 
-CARGS="-kwtags -text -grab -url "$URL" -out "$OUT" $USEJS $USEPROXY $NOPIC"
+CARGS="-kwtags -text -grab -url "$URL" -out "$OUT" $VERBOSE $APPTMOUT $USEJS $USEPROXY $NOPIC"
 
 _RES=0
 if [ -n "$USEGRID" ]
