@@ -12,6 +12,12 @@ fi
 # tiny things for convenience
 #
 
+killme() {
+    eval ${KILLALL} && sleep 1
+    rm -rf "${APPPROFILEDIR}"
+    rm -f "${FIFO}"
+}
+
 waitforapp() {
     until [[ ${line} == "APP: READY" ]]
     do
@@ -19,12 +25,11 @@ waitforapp() {
 
         if [[ $? != 0 ]]
         then
-            eval ${KILLALL} && sleep 1
-            rm -rf "${APPPROFILEDIR}"
-            rm -f "${FIFO}"
+            killme
             return 10
         elif [[ ${line:0:8} == "RES: ERR" ]]
         then
+            killme
             echo "${line}"
             return 20
         elif [[ ${line:0:9} == "APP: STOP" ]]
