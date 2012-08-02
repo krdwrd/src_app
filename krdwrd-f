@@ -79,5 +79,5 @@ fi
 
 chkfifo || exit 1
 mkdir -p ${APPPROFILEDIR} || exit 1
-$(dirname $0)/krdwrd -profile "${APPPROFILEDIR}" -follow -KWID${GRID}.ini -tmout 10000 $@ 1>$FIFO 2>&2 &
+$(dirname $0)/krdwrd -profile "${APPPROFILEDIR}" -follow -KWID${GRID}.ini $@ 1>$FIFO 2>&2 &
 waitforapp
