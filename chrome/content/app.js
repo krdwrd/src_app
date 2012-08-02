@@ -162,7 +162,7 @@ var KrdWrdApp = {
     }
     catch (e)
     {
-      error(format_exception(e));
+      error("in file "+e.fileName+",line "+e.lineNumber+": "+format_exception(e));
     }
     print("RES: SUCCESS");
 
