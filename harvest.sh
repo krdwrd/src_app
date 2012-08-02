@@ -7,6 +7,7 @@ USEJS=${KW_USEJS-""} # "-j"
 USEPROXY=${KW_USEPROXY-"-p 192.168.0.1:8080"} # "-p host:port" or "-p \"\""
 NOPIC=${KW_NOPIC-""} # "-s"
 USEGRID=${KW_USEGRID-""} # "-g"
+APPTMOUT=${KW_APPTMOUT-"-t 15000"} # ""
 
 function usage
 {
@@ -127,8 +128,8 @@ do
         fi
         
         # download
-        # echo $(dirname $0)/grab.sh $USEGRID $USEFOLLOW $USEJS $USEPROXY $NOPIC "$url" $(pwd)/$cat.$ind
-        $(dirname $0)/grab.sh $USEGRID $USEFOLLOW $USEJS $USEPROXY $NOPIC "$url" $(pwd)/$cat/$ind 1>&1 >> $LOG
+        # echo $(dirname $0)/grab.sh $USEGRID $USEFOLLOW $USEJS $USEPROXY $NOPIC $APPTMOUT "$url" $(pwd)/$cat.$ind
+        $(dirname $0)/grab.sh $USEGRID $USEFOLLOW $USEJS $USEPROXY $NOPIC $APPTMOUT "$url" $(pwd)/$cat/$ind 1>&1 >> $LOG
         _RES=$?
 
         # this gives us the URL as the app printed it
