@@ -75,17 +75,17 @@ function grabSource(doc)
 function grabRect(win, doc, x, y, w, h)
 {
     // get references to the target canvas
-    var canvas = doc.createElement('canvas');
-    doc.documentElement.appendChild(canvas);
-
-    canvas.width = w;
-    canvas.height = h;
+    var canvas = doc.createElementNS('http://www.w3.org/1999/xhtml', 'canvas');
+    canvas.setAttribute('width', w);
+    canvas.setAttribute('height', h);
 
     // get a fresh drawing context
     var context = canvas.getContext('2d');
-
+    context.clearRect(0, 0, canvas.width, canvas.height);
+    context.scale(1.0, 1.0);
     // draw portion of window
-    context.drawWindow(win, x, y, w, h, 'rgb(255,255,255);');
+    verbose("drawWindow(x,y,w,h): "+x+","+y+","+w+","+h);
+    context.drawWindow(win, x, y, w, h, 'rgb(255,255,255)');
     return canvas;
 };
 
@@ -111,9 +111,10 @@ function grabScreen(win, doc)
         }
         return h;
     }
-    var h = Math.round(maxh(doc, doc.height));
+    var w = doc.width || win.document.body.clientWidth
+    var h = Math.round(maxh(doc, doc.height)) || doc.body.clientHeight;
 
-    return grabRect(win, doc, 0, 0, doc.width, h);
+    return grabRect(win, doc, 0, 0, w, h);
 };
 
 // vim: et
