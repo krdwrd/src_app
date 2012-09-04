@@ -67,14 +67,7 @@ var KrdWrdApp = {
           print("done");
       }
 
-      if (KrdWrdApp.param.pic)
-      {
-          // save page as png
-          dump("PNG: ");
-          var res = grabScreen(win, doc);
-          print((res != null));
-          saveCanvas(res, KrdWrdApp.param.outbase + '.png');
-      }
+      KrdWrdApp.process_param_pic(win, doc);
 
       var res = extractTags(doc.body);
       saveText(res, KrdWrdApp.param.outbase + '.gold');
@@ -110,17 +103,9 @@ var KrdWrdApp = {
         saveText(source, KrdWrdApp.param.outbase + '.html');
 
       setTimeout(function(){
-              if (KrdWrdApp.param.pic)
-              {
-                  // save page as png
-                  dump("PNG: ");
-                  var res = grabScreen(win, doc);
-                  print((res != null));
-                  saveCanvas(res, KrdWrdApp.param.outbase + '.png');
-              }
-
-              observerService.notifyObservers(null, "KrdWrdApp", "done");
-              },5000);
+          KrdWrdApp.process_param_pic(win, doc);
+          observerService.notifyObservers(null, "KrdWrdApp", "done");
+      },5000);
 
   },
 
@@ -129,20 +114,24 @@ var KrdWrdApp = {
 
     try
     {
+      print("URL: " + doc.location);
+
+      // save html
+      //
+      // remove NOSCRIPT nodes (without JS they turn up as text, ie. visible HTML tags)
       if (KrdWrdApp.param.jayscript)  
           filterNodes(doc.body, "NOSCRIPT");
-
+      // insert kwtags
       if (KrdWrdApp.param.kwtags)
           kwtext(doc, doc.body);
 
-      print("URL: " + doc.location);
-      
-      // save html
       var source = grabSource(doc);
       print("HTML: " + (source != null));
       if (source)
           saveText(source, KrdWrdApp.param.outbase + '.html');
 
+      // save TeXT (if pipe exists)
+      //
       if (KrdWrdApp.param.text && source && typeof(pipes['cl']) != "undefined")
       {
           var txt = pipes.cl.extract(doc.body);
@@ -151,14 +140,7 @@ var KrdWrdApp = {
           saveText(txt, KrdWrdApp.param.outbase + '.txt');
       }
 
-      if (KrdWrdApp.param.pic)
-      {
-          // save page as png
-          var grab = grabScreen(win, doc);
-          print("PNG: " + (grab != null));
-          if (grab)
-              saveCanvas(grab, KrdWrdApp.param.outbase + '.png');
-      }
+      KrdWrdApp.process_param_pic(win, doc);
     }
     catch (e)
     {
@@ -168,9 +150,32 @@ var KrdWrdApp = {
 
     setTimeout(function() { 
             observerService.notifyObservers(null, "KrdWrdApp", "done");
-            },100);
+            },250);
 
   },
+
+  process_param_pic: function(win, doc)
+  {
+      // save page as png
+      if (KrdWrdApp.param.pic)
+      {
+          try
+          {
+            var grab = grabScreen(win, doc);
+            saveCanvas(grab, KrdWrdApp.param.outbase + '.png');
+          }
+          catch (e)
+          {
+            print(format_exception(e));
+          }
+          print("PNG: " + (grab != null));
+      }
+      else
+      {
+          print("PNG: disabled");
+      }
+  },
+
 
   observerService:  Components.classes["@mozilla.org/observer-service;1"].
                         getService(Components.interfaces.nsIObserverService)
@@ -187,6 +192,7 @@ KrdWrdAppOb.prototype = {
     observe: function(subject, topic, data) {
       if (!KrdWrdApp.param.follow)
       {
+          print("APP: BYE");
           quit();
       }
       else
