@@ -114,19 +114,6 @@ CommandLineObserver.prototype = {
 
      param.pic = param.pic != null ? !param.pic : true ;
 
-     if (! param.follow) 
-     {
-         // auto-kill after 60sec
-         print("OPT: timeout for app is "+param.tmout+"ms");
-         timeoutid = setTimeout(function() {
-                 error("timeout");
-                 }, param.tmout);
-     }
-     else
-     {
-        print("OPT: follow mode, timeout for page load is "+param.tmout+"ms");
-     }
-
      if (param.pipes)
          param.pipes = param.pipes.split(',');
      else
