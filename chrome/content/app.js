@@ -138,6 +138,9 @@ var KrdWrdApp = {
           print("TXT: " + txt.length + " chars");
           print("TXT: " + txt.btelen() + " btetoks");
           saveText(txt, KrdWrdApp.param.outbase + '.txt');
+          //
+          // var txt = pipes.txt.extract(doc.body);
+          // saveText(txt, KrdWrdApp.param.outbase + '.rtxt');
       }
 
       KrdWrdApp.process_param_pic(win, doc);
