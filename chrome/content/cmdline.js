@@ -27,16 +27,16 @@ Options:\n\
       Only load named pipes instead of ALL (pipe only)\n\
     -sweepin file\n\
       Use file to get the silver tags for sweeping (sweep only)\n\
-    -pic\n\
-      Do NOT write Screenshot to PREFIX.png\n\
     -sloppy\n\
       Ignore differences in text content during merge (merge only)\n\
     -stats\n\
       Output statistics (merge only)\n\
     -finalmrg\n\
-      resolve mrgtie via last file from FILELIST (merge only)\n\
-    -victor\n\
-      victor export\n\
+      Resolve mrgtie via last file from FILELIST (merge only)\n\
+    -pic\n\
+      Do NOT write Screenshot to PREFIX.png\n\
+    -urlrqs\n\
+      Print the URLs for document and other requests\n\
     -verbose\n\
       Be more verbose about the ongoing processing\n\
     -follow\n\
@@ -47,7 +47,7 @@ Options:\n\
       Timeout (in ms) for \n\
        * quitting the App (not follow mode) or\n\
        * loading a page (follow mode)\n\
-      Note: the output will be 'APP: STOP'\n\
+      Note: output will be 'APP: STOP' when triggered\n\
     -proxy URL\n\
       Use URL as proxy (default proxy.krdwrd.org:8080)\n\
     -js\n\
@@ -55,6 +55,9 @@ Options:\n\
    \n\n\
 *Note: Always use absolute paths when specifying file names.\n\
 ";
+// not supported at the moment.
+//    -victor\n\
+//      victor export\n\
 
 // command line parameters
 KrdWrdApp.param = {}; 
@@ -83,10 +86,11 @@ CommandLineObserver.prototype = {
      param.kwtags = cmdLine.handleFlag("kwtags", false);
      param.pipes = cmdLine.handleFlagWithParam("pipes", false);
      param.sweepin = cmdLine.handleFlagWithParam("sweepin", false);
-     param.pic = cmdLine.handleFlag("pic", false);
      param.sloppy = cmdLine.handleFlag("sloppy", false);
      param.stats = cmdLine.handleFlag("stats", false);
      param.finalmrg = cmdLine.handleFlag("finalmrg", false);
+     param.pic = cmdLine.handleFlag("pic", false);
+     param.urlrqs = cmdLine.handleFlag("urlrqs", false);
      param.victor = cmdLine.handleFlag("victor", false);
      param.verbose = cmdLine.handleFlag("verbose", false);
      // keep running, aka. tail -f 
