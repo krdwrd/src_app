@@ -1,0 +1,3 @@
+[submodule "extensions/krdwrd@krdwrd.org"]
+	path = extensions/krdwrd@krdwrd.org
+	url = git@github.com:krdwrd/src_addon.git
