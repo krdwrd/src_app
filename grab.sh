@@ -58,7 +58,7 @@ then
     usage
 fi
 
-CARGS="-kwtags -text -grab -url "$URL" -out "$OUT" $VERBOSE $APPTMOUT $USEJS $USEPROXY $NOPIC"
+CARGS="-kwtags -text -grab -url "$URL" -out "$OUT" $VERBOSE $APPTMOUT $USEJS $USEPROXY $NOPIC -urlrqs"
 
 _RES=0
 if [ -n "$USEGRID" ]
