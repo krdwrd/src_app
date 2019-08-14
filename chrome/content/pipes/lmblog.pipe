@@ -1,0 +1,248 @@
+// 
+// text paragraphs output. 'collect' text nodes' content until paragraph
+// ends (checked by wsNode()) and output the result as many times as
+// nodes were collected.
+//
+
+var extract = function(doc)
+{
+    traverse(doc, function(node, kw) 
+        {
+            node.parentNode.className = filterkw(node.parentNode.className) + kw;
+        }, "krdwrd-tag-1"
+    );
+
+    var res = "";
+    var txt = [];
+
+    function txTraverse(body)
+    {
+        // keep track of:
+        // the paragraph - this will corespond to the line # in other
+        // pipe out files.
+        var par_idx = 0;
+        var tags_stck = [];
+        var tags2prt_stck = [];
+        var line = "";
+
+        var extracTag = function (node,mode)
+        {
+            var addrm = function(tag, constraints)
+            {
+                // a list of dependencies, i.e. tags that need to be on the stack
+                // (in the same order) 
+                var deplist = constraints || undefined;
+
+                var check_deplist = function()
+                {
+                    if (deplist)
+                    {
+                        // check 'false' dependencies: if any of these tags are on the
+                        // stack return false.
+                        for (dep in deplist.false)
+                            if (tags_stck.indexOf(deplist.false[dep]) >= 0)
+                                return false;
+
+                        // check the 'true' dependencies - if any, in the given order.
+                        if (deplist.true)
+                        {
+                            var lastIdx = 0;
+                            for (dep in deplist.true)
+                            {
+                                idx = tags_stck.concat(tags2prt_stck)
+                                    .indexOf(deplist.true[dep], lastIdx);
+                                if (idx == -1)
+                                    return false;
+                                else
+                                    lastIdx = idx;
+                            }
+                            return true;
+                         }
+                         return false;
+                    }
+                };
+
+                switch (mode)
+                {
+                    case "open":
+                        if (!deplist || (deplist && check_deplist()))
+                        {
+                            tags_stck.push(tag);
+
+                            if (!wsNode(node) && tag != "noprint") 
+                                tags2prt_stck.push(tag);
+                        }
+                        break;
+
+                    case "close":
+                        if (!deplist || (deplist && check_deplist()))
+                            tags_stck.pop();
+                        break;
+
+                }
+            };
+
+            if (node.classList && node.nodeName)
+            {
+                if (node.classList.contains("post-comments-title"))
+                    addrm("noprint");
+                else if (node.nodeName == "UL" && node.classList.contains("post-comments"))
+                    addrm("comments");
+                else if (node.nodeName == "H1")
+                    addrm("title",{"true":["article"]});
+                else if (node.nodeName == "H4")
+                    addrm("comment_author",{"true":["comment_head"]});
+                else if (node.nodeName == "LI" && node.getAttribute("id") && node.getAttribute("id").substr(0,8) == "comment-")
+                    addrm("comment_id_"+node.getAttribute("id").substring(8));
+                else if (node.nodeName == "DIV")
+                {
+                    if (node.classList.contains("post_comments"))
+                        addrm("noprint");
+                    else if (node.classList.contains("ads-articolo"))
+                        addrm("noprint");
+                    else if (node.classList.contains("articolo"))
+                        addrm("article");
+                    else if (node.classList.contains("contenuto"))
+                        addrm("body");
+                    else if (node.classList.contains("comment_head"))
+                        addrm("comment_head");
+                    else if (node.classList.contains("comment_text"))
+                        addrm("comment_text");
+                    else if (node.classList.contains("meta"))
+                        addrm("noprint");
+                    else if (node.classList.contains("info-aggiuntive"))
+                        addrm("noprint");
+                }
+                else if (node.nodeName == "SMALL")
+                    addrm("date",{"true":["article"],"false":["comments","noprint"]});
+                else if (node.nodeName == "A" && node.classList.contains("comment_link"))
+                    addrm("comment_label");
+                else if (node.nodeName == "SPAN")
+                {
+                    if (node.classList.contains("noprint"))
+                        addrm("noprint");
+                    else if (node.classList.contains("link-commenti"))
+                        addrm("noprint");
+                    else if (node.classList.contains("post-add-comment"))
+                        addrm("noprint");
+                    else if (node.classList.contains("comment_rating"))
+                        addrm("noprint");
+                }
+            }
+        };
+
+        // ...is this section to be printed?
+        function tagsAccept()
+        {
+
+            var isarticle = function(x) { return (x == "article"); };
+            var noprint = function(x) { return (x == "noprint"); };
+
+            if (tags_stck.some(noprint))
+                return false;
+            else if (tags_stck.some(isarticle))
+                return true;
+            else
+                return false;
+        };
+
+        // TextPro header for a paragraph
+        function paraHd()
+        {
+            var retVal = "";
+
+            var loc = doc.parentNode.parentNode.location.toString();
+            retVal = retVal + "# FILE: "+loc.substr(loc.lastIndexOf('/')+1)+"\n";
+
+            tags_stck.forEach(function(x,idx)
+                    {
+                        retVal = retVal + (x != "noprint"?"# TAG: "+x+'\n':"");
+                    });
+
+            for (tag in tags2prt_stck)
+                retVal = retVal + "# TAG: "+tags2prt_stck.pop()+"\n";
+
+            retVal = retVal + "# KW_PARID: "+par_idx+"\n";
+            retVal = retVal + "# FIELDS: "+"\n";
+
+            return retVal;
+        };
+
+        // print a paragraph
+        function prtPara()
+        {
+            if (line.length > 0)
+            {
+                var nl = line
+                        .replace( /^\s+/, "")
+                        .replace( /\s+$/, "")
+                        .replace( /\s+/g, " ");
+
+                if (nl)
+                    txt[txt.length] = paraHd() + nl + "\n";
+
+                line = "";
+            }
+        };
+
+        function rec(node)
+        {
+            extracTag(node,"open");
+
+            if (node.nodeName == "#text")
+            {
+                // is this a text node that is recognized by /the other/ pipelines?
+                if (node.data
+                        .replace( /^\s+/g, "")
+                        .replace( /\s+$/g, "")
+                        .replace( /\n/g, " ")
+                        .replace(/  +/g, " "))
+                {
+                    par_idx++;
+                }
+
+                // keep the formatting close to the rendered output, e.g.
+                // do not discard ' ' between two <A> tags; or else the text of
+                // the links sticks together.
+                var formttx = node.data.replace( /\n/g, " ")
+                    .replace( /[\t ]+/g, " ")
+                    .replace( /^\s+$/g, " ")
+                    .replace( /^[\t ]+/g, " ")
+                    .replace( /[\t ]+$/g, " ");
+
+                if (formttx && tagsAccept())
+                    line += formttx;
+            } 
+
+            if (wsNode(node))
+            {
+                prtPara();
+            } 
+
+            for (child in node.childNodes)
+            {
+                cnode = node.childNodes[child];
+                if (recursehere(node)) rec(cnode);
+            }
+
+            if (wsNode(node))
+            {
+                prtPara();
+            }
+
+            extracTag(node,"close");
+
+        };
+        rec(body);
+
+        // dont't forget 'to empty' the line
+        prtPara();
+    }
+    txTraverse(doc);
+
+    for (t in txt) res += txt[t] + "\n";
+    return res;
+}
+
+
+// vim: filetype=javascript

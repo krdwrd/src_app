@@ -1,0 +1,274 @@
+// 
+// text paragraphs output. 'collect' text nodes' content until paragraph
+// ends (checked by wsNode()) and output the result as many times as
+// nodes were collected.
+//
+
+var extract = function(doc)
+{
+    traverse(doc, function(node, kw) 
+        {
+            node.parentNode.className = filterkw(node.parentNode.className) + kw;
+        }, "krdwrd-tag-1"
+    );
+
+    var res = "";
+    var txt = [];
+
+    function txTraverse(body)
+    {
+        // keep track of:
+        // the paragraph - this will corespond to the line # in other
+        // pipe out files.
+        var par_idx = 0;
+        var tag_stck = [];
+        var tag_idx = -1;
+        var span_idx = -1;
+        var line = "";
+
+        var wikiTag = function (node)
+        {
+            var wikit;
+            if (node.classList.contains("collapsible"))
+                wikit = "noprint"; 
+            else if (node.classList.contains("noprint"))
+                wikit = "noprint"; 
+            else if (node.nodeName == "SPAN" && (node.classList.contains("editsection")))
+                wikit="noprint";
+            else if (node.nodeName == "TABLE")
+            {
+                if (node.classList.contains("wikitable"))
+                    wikit="table";
+                else if (node.classList.contains("toc"))
+                    wikit="toc";
+                else 
+                    wikit="table";
+            }
+            else if (node.nodeName == "H1" && node.classList.contains("firstHeading"))
+                wikit="pagetitle";
+            else if (node.nodeName == "H1")
+                wikit = "title";
+            else if (node.nodeName == "H2")
+                wikit = "subtitle";
+            else if (node.nodeName == "H3" && node.getAttribute("id") == "siteSub")
+                wikit = "noprint"; // old wiki style
+            else if (node.nodeName == "H3")
+                wikit = "subsubtitle";
+            else if (node.nodeName == "H4")
+                wikit = "subsubsubtitle";
+            else if (node.nodeName == "ol" && node.classList.contains("references"))
+                wikit="references"; // old wiki style
+            else if (node.nodeName == "DIV" && node.classList.contains("classlinks"))
+                wikit="noprint"; // old wiki style
+            else if (node.nodeName == "DIV" && node.classList.contains("printfooter"))
+                wikit="noprint";
+            else {        
+                if (node.hasAttributes()) 
+                {
+                    var attrs = node.attributes;
+                    for(var i=attrs.length-1; i>=0; i--)
+                    {
+                        if (node.nodeName == "DIV")
+                        {
+                            if (attrs[i].name == "id")
+                            {
+                                switch (attrs[i].value)
+                                {
+                                    case "bodyContent":
+                                        wikit="body";
+                                        break;
+                                    
+                                    case "content":
+                                        // wikit="content"
+                                        break;
+
+                                    case "footer":
+                                        wikit="footer";
+                                        break;
+                                        
+                                    case "jump-to-nav":
+                                    case "siteSub":
+                                    case "catlinks":
+                                    case "contentSub": // old wiki style
+                                    case "column-one": // old wiki style
+                                        wikit="noprint";
+                                        break;
+                                }
+                            }
+
+                            if (node.classList.contains("references"))
+                                wikit="references";
+                            else if (node.classList.contains("references-small"))
+                                wikit="references"; // old wiki style
+                            else if (node.classList.contains("NavFrame"))
+                                wikit="noprint";
+                            else if (node.classList.contains("thumb"))
+                                wikit="noprint";
+                        }
+                    }
+                }
+            }
+            return wikit;
+        };
+
+        var wikiSpan = function (node,mode) {
+            var wikis;
+            var addrm;
+
+            if (node.nodeName == "SPAN")
+            {
+                if (node.getAttribute("id") == "coordinates")
+                    addrm = mode;
+                else if (node.classList.contains("editsection"))
+                    addrm = mode;
+                else if (node.classList.contains("noprint"))
+                    addrm = mode;
+            }
+
+            switch (addrm)
+            {
+                case "open":
+                    ++span_idx;
+                    break;
+                
+                case "close":
+                    span_idx--;
+                    break;
+
+                default:
+                    break;
+            }
+        };
+
+        var wikiSpan_veto = function () {
+            return (span_idx > -1);
+        };
+
+
+        // ...is this section to be printed?
+        function prtSctn()
+        {
+            for (tag in tag_stck)
+            {
+                chtg = tag_stck[tag];
+                if (chtg == "noprint")
+                    return false;
+                else if (chtg == "toc")
+                    return false;
+                else if (chtg == "footer")
+                    return false;
+                else if (chtg == "table")
+                    return false;
+                else if (chtg == "references")
+                    return false;
+            }
+            return true;
+        };
+
+        // TextPro header for a paragraph
+        function paraHd()
+        {
+            var retVal = "";
+
+            loc = doc.parentNode.parentNode.location.toString();
+            retVal = retVal + "# FILE: "+loc.substr(loc.lastIndexOf('/')+1)+"\n";
+            for (tag in tag_stck)
+            {
+                if (tag_stck[tag])
+                    retVal = retVal + "# TAG: "+tag_stck[tag]+"\n";
+            }
+            retVal = retVal + "# KW_PARID: "+par_idx+"\n";
+            retVal = retVal + "# FIELDS: "+"\n";
+
+            return retVal;
+        };
+
+        // print a paragraph
+        function prtPara()
+        {
+            var nl = line
+                    .replace( /\[[0-9]+\]/g, "" )
+                    .replace( /^\s+/, "")
+                    .replace( /\s+$/, "")
+                    .replace( /\s+/g, " ");
+
+            if (nl && prtSctn())
+                txt[txt.length] = paraHd() + nl + "\n";
+
+            line = "";
+        };
+
+        function rec(node)
+        {
+            wikiSpan(node,"open");
+
+            if (node.nodeName == "#text")
+            {
+                // is this a text node that is recognized by /the other/ pipelines?
+                if (node.data
+                        .replace( /^\s+/g, "")
+                        .replace( /\s+$/g, "")
+                        .replace( /\n/g, " ")
+                        .replace(/  +/g, " "))
+                {
+                    par_idx++;
+                }
+
+                // keep the formatting close to the rendered output, e.g.
+                // do not discard ' ' between two <A> tags; or else the text of
+                // the links sticks together.
+                var formttx = node.data.replace( /\n/g, " ")
+                    .replace( /[\t ]+/g, " ")
+                    .replace( /^\s+$/g, " ")
+                    .replace( /^[\t ]+/g, " ")
+                    .replace( /[\t ]+$/g, " ");
+
+                if (formttx && !wikiSpan_veto())
+                    line += formttx;
+            } 
+
+            var wikit = null;
+            if (wsNode(node))
+            {
+                wikit = wikiTag(node);
+                if (wikit)
+                {
+                    tag_stck[++tag_idx] = wikit;
+                    //print("added "+wikit+"/"+tag_stck[tag_idx]+" - "+tag_stck);
+                }
+
+                if (line.length > 0) prtPara();
+            } 
+
+            for (child in node.childNodes)
+            {
+                cnode = node.childNodes[child];
+                if (recursehere(node)) rec(cnode);
+            }
+
+            wikiSpan(node,"close");
+            if (wsNode(node))
+            {
+                prtPara();
+                if (wikit)
+                {
+                    //print("rem "+wikit+"/"+tag_stck[tag_idx])
+                    tag_stck[tag_idx--] = undefined;
+                    //print(" - "+tag_stck);
+                }
+            }
+
+        };
+        rec(body);
+
+        // dont't forget 'to empty' the line
+        if (line.length > 0) prtPara();
+    }
+    txTraverse(doc);
+
+    for (t in txt) res += txt[t] + "\n";
+    return res;
+}
+
+
+// vim: filetype=javascript
